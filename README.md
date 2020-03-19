@@ -1,5 +1,6 @@
 # ASK
 Small studies project
+
 Zadanie 1.
 Wykorzystując dowolny język programowania dla komputerów w standardzie PC napisać aplikację stanowiącą model
 programowego symulatora mikroprocesora. Program powinien mieć przyjazny interfejs użytkownika graficzny lub znakowy do
