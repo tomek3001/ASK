@@ -5,7 +5,7 @@ Zadanie 1.
 Wykorzystując dowolny język programowania dla komputerów w standardzie PC napisać aplikację stanowiącą model
 programowego symulatora mikroprocesora. Program powinien mieć przyjazny interfejs użytkownika graficzny lub znakowy do
 uznania przez autorów. Należy przyjąć następujący model naszego procesora:
-• Procesor posiada cztery 16-bitowe rejestry ogólnego przeznaczenia oznaczone jako AX, BX, CX i DX;
+• Procesor posiada cztery 16-bitowe rejestry ogólnego przeznaczenia oznaczone jako AX, BX, CX i DX
 • Każdy z rejestrów powinien być traktowany jako para 8-bitowych rejestrów o oznaczeniach NH dla części starszej i NL
 dla części młodszej gdzie N oznacza A albo B albo C albo D;
 • Lista rozkazów naszego procesora obejmuje trzy rozkazy MOV – przesłania, ADD – dodawania i SUB – odejmowania;
@@ -29,8 +29,7 @@ Using any programming language for computers in the PC standard, write a model a
 software microprocessor simulator. The program should have a user-friendly graphic or character interface - to
 recognition by the authors. The following model of our processor should be adopted:
 • The processor has four 16-bit general purpose registers marked as AX, BX, CX and DX;
-• Each register should be treated as a pair of 8-bit registers with NH designations for the older part and NL
-for the younger part where N is A or B or C or D;
+• Each register should be treated as a pair of 8-bit registers with NH designations for the older part and NL for the younger part where N is A or B or C or D;
 • The list of orders of our processor includes three MOV orders - messages, ADD - add and SUB - subtraction;
 • The processor enables two addressing modes: register mode and instant mode;
 • The program allows you to write short programs using the available commands and addressing modes;
