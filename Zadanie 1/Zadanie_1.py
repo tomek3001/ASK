@@ -13,11 +13,5 @@ class Zadanie1App(App):
 
 Zadanie1 = Zadanie1App()
 
-#Zadanie1.run()
+Zadanie1.run()
 
-AX = Register()
-BX = Register()
-CX = Register()
-DX = Register()
-
-print(ord('C'))
