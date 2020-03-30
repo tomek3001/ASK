@@ -20,9 +20,4 @@ class Register():
         addr = start
         while addr <=end:
             print(addr, ": ", self.Read(addr))
-
-Register = Register(0b00000000)
-Register.Write(0b00000000, 0b00001100)
-Register.Write(0b00000010, 0b00001010)
-Register.Write(0b00000001, 0b00001001)
-Register.Show()
+            
