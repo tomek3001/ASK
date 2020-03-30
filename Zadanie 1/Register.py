@@ -20,6 +20,7 @@ class Register():
         addr = start
         while addr <=end:
             print(addr, ": ", self.Read(addr))
+<<<<<<< HEAD
 
 
 class SubRegister():
@@ -27,3 +28,6 @@ class SubRegister():
         self.baseAddr = baseAddr
         self.dataL = [0]*8
         self.dataH = [0]*8
+=======
+            
+>>>>>>> 5a9e3244ba79d3f7f495e738052475e5dbebedbe
