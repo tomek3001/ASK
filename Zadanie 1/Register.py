@@ -21,8 +21,9 @@ class Register():
         while addr <=end:
             print(addr, ": ", self.Read(addr))
 
-Register = Register(0b00000000)
-Register.Write(0b00000000, 0b00001100)
-Register.Write(0b00000010, 0b00001010)
-Register.Write(0b00000001, 0b00001001)
-Register.Show()
+
+class SubRegister():
+    def __init__(self, baseAddr):
+        self.baseAddr = baseAddr
+        self.dataL = [0]*8
+        self.dataH = [0]*8
