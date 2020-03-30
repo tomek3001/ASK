@@ -8,8 +8,6 @@ class Zadanie1App(App):
     def build(self):
         return Label()
 
-
-
 Zadanie1 = Zadanie1App()
 
 Zadanie1.run()
