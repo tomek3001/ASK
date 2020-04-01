@@ -5,11 +5,11 @@ class Register(object):
         self.dataL = [0] * 8
         self.dataH = [0] * 8
 
-    def Read(self, addr, is_high):
+    def Read(self, addr, size=1, is_high="H"):
         if is_high == 'H':
-            return self.dataH[addr]
+            return self.dataH[addr:(addr+size)]
         else:
-            return self.dataL[addr]
+            return self.dataL[addr:(addr+size)]
 
     def Write(self, addr, data, is_high):
         if is_high == 'H':
@@ -44,7 +44,7 @@ def copy_paste(source, destination):
         if destination[0] == 'R':
             name_d = destination[1] + 'X'
             for i in range(8):
-                rejestry[name_d].Write(i,rejestry[name_s].Read(i, source[2]), destination[2])
+                rejestry[name_d].Write(i, rejestry[name_s].Read(i, source[2]), destination[2])
     elif source[0] == "#":
         if destination[0] == 'R':
             name_d = destination[1] + 'X'
@@ -57,6 +57,32 @@ def copy_paste(source, destination):
                 print("Out of range")
 
 
+def add(source, destination, adding=True):
+    source = list(source)
+    destination = list(destination)
+    if source[0] == 'R':
+        name_s = source[1] + 'X'
+        if destination[0] == 'R':
+            name_d = destination[1] + 'X'
+            binary1 = "0b" + "".join([str(number) for number in
+                                 rejestry[name_d].Read(0, size=8, is_high=destination[2])])
+            binary2 = "0b" + "".join([str(number) for number in
+                                      rejestry[name_s].Read(0, size=8, is_high=destination[2])])
+            if adding : binary_sum = bin(int(binary1, 2) + int(binary2, 2)).split("b")[1]
+            else:  binary_sum = bin(int(binary1, 2) - int(binary2, 2)).split("b")[1]
+            accum = list(map(int, binary_sum[-9:]))
+
+    elif source[0] == "#":
+        name_d = destination[1] + 'X'
+        binary1 = "0b" + "".join([str(number) for number in
+                                  rejestry[name_d].Read(0, size=8, is_high=destination[2])])
+        value = int("".join(map(str, source[1:])))
+        binary2 = "0b" + '{0:08b}'.format(value)
+
+        if adding: binary_sum = '{0:08b}'.format(int(binary1, 2) + int(binary2, 2))
+        else: binary_sum = '{0:08b}'.format(int(binary1, 2) - int(binary2, 2))
+        accum = list(map(int, binary_sum[-9:]))
+
 
 rejestry = {"AX":0, "BX":1, "CX":2, "DX":3}
 
@@ -64,6 +90,22 @@ rejestry["AX"] = Register("A")
 rejestry["BX"] = Register("B")
 rejestry['CX'] = Register("C")
 rejestry['DX'] = Register("D")
+
+''' Przykład dodawanie
+for i in range(8):
+    if i != 3 and i != 5:
+        rejestry["AX"].Write(i,1,"H")
+rejestry["BX"].Write(7, 1, "H") # 7 to najmniej znaczący bit
+add("#120", "RBH")
+'''
+
+''' Przykład odejmowanie
+for i in range(8):
+    if i != 3 and i != 5:
+        rejestry["AX"].Write(i,1,"H")
+rejestry["BX"].Write(7, 1, "H") # 7 to najmniej znaczący bit
+add("RBH", "RAH", adding=False)
+'''
 
 ''' Przykład 1
 for i in range(8):
