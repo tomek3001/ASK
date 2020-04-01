@@ -56,7 +56,6 @@ def copy_paste(source, destination):
 def add(source, destination, adding=True):
     source = list(source)
     destination = list(destination)
-    name_d = destination[1] + 'X'
     if source[0] == 'R':
         name_s = source[1] + 'X'
         if destination[0] == 'R':
@@ -65,10 +64,13 @@ def add(source, destination, adding=True):
                                  rejestry[name_d].Read(0, size=8, is_high=destination[2])])
             binary2 = "0b" + "".join([str(number) for number in
                                       rejestry[name_s].Read(0, size=8, is_high=destination[2])])
-            if adding: binary_sum = bin(int(binary1, 2) + int(binary2, 2)).split("b")[1]
-            else:  binary_sum = bin(int(binary1, 2) - int(binary2, 2)).split("b")[1]
-            accum = list(map(int, binary_sum[-9:]))
-            rejestry[name_d].Write(0, accum, size=8, is_high=destination[2])
+            if not adding and int(binary1, 2) < int(binary2, 2):
+                print("Out of range, program is not executing negative numbers")
+            else:
+                if adding: binary_sum = bin(int(binary1, 2) + int(binary2, 2)).split("b")[1]
+                else:  binary_sum = bin(int(binary1, 2) - int(binary2, 2)).split("b")[1]
+                accum = list(map(int, binary_sum[-9:]))
+                rejestry[name_d].Write(0, accum, size=8, is_high=destination[2])
     elif source[0] == "#":
         name_d = destination[1] + 'X'
         binary1 = "0b" + "".join([str(number) for number in
@@ -98,7 +100,7 @@ for i in range(8):
 rejestry["BX"].Write(7, 1, is_high="H") # 7 to najmniej znaczący bit
 #print(rejestry["AX"].Read(0, 8))
 print(rejestry["BX"].Read(0,8))
-add("#121", "RBH", adding=True)
+add("RAH", "RBH", adding=False)
 print(rejestry["BX"].Read(0,8))
 
 ''' #Przykład odejmowanie
