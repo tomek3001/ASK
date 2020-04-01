@@ -11,22 +11,18 @@ class Register(object):
         else:
             return self.dataL[addr:(addr+size)]
 
-    def Write(self, addr, data, is_high):
+    def Write(self, addr, data, size=1,is_high="H"):
+        if isinstance(data, int): data = [data]
         if is_high == 'H':
-            self.dataH[addr] = data
+
+            self.dataH[addr:addr+size] = data
         else:
-            self.dataL[addr] = data
+            self.dataL[addr:addr+size] = data
 
     def Show(self):
         for (i, j) in zip(self.dataH, self.dataL):
             if i != 0:
                 print(1)
-
-    def ShowRange(self, start, end):
-        addr = start
-        while addr <=end:
-            print(addr, ": ", self.Read(addr, True))
-            print(addr, ": ", self.Read(addr, False))
 
     def getName(self):
         return self.name
@@ -60,6 +56,7 @@ def copy_paste(source, destination):
 def add(source, destination, adding=True):
     source = list(source)
     destination = list(destination)
+    name_d = destination[1] + 'X'
     if source[0] == 'R':
         name_s = source[1] + 'X'
         if destination[0] == 'R':
@@ -68,21 +65,23 @@ def add(source, destination, adding=True):
                                  rejestry[name_d].Read(0, size=8, is_high=destination[2])])
             binary2 = "0b" + "".join([str(number) for number in
                                       rejestry[name_s].Read(0, size=8, is_high=destination[2])])
-            if adding : binary_sum = bin(int(binary1, 2) + int(binary2, 2)).split("b")[1]
+            if adding: binary_sum = bin(int(binary1, 2) + int(binary2, 2)).split("b")[1]
             else:  binary_sum = bin(int(binary1, 2) - int(binary2, 2)).split("b")[1]
             accum = list(map(int, binary_sum[-9:]))
-
+            rejestry[name_d].Write(0, accum, size=8, is_high=destination[2])
     elif source[0] == "#":
         name_d = destination[1] + 'X'
         binary1 = "0b" + "".join([str(number) for number in
                                   rejestry[name_d].Read(0, size=8, is_high=destination[2])])
         value = int("".join(map(str, source[1:])))
         binary2 = "0b" + '{0:08b}'.format(value)
-
-        if adding: binary_sum = '{0:08b}'.format(int(binary1, 2) + int(binary2, 2))
-        else: binary_sum = '{0:08b}'.format(int(binary1, 2) - int(binary2, 2))
-        accum = list(map(int, binary_sum[-9:]))
-
+        if not adding and int(binary1,2) < int(binary2,2):
+            print("Out of range, program is not executing negative numbers")
+        else:
+            if adding: binary_sum = '{0:08b}'.format(int(binary1, 2) + int(binary2, 2))
+            else: binary_sum = '{0:08b}'.format(int(binary1, 2) - int(binary2, 2))
+            accum = list(map(int, binary_sum[-9:]))
+            rejestry[name_d].Write(0, accum, size=8, is_high=destination[2])
 
 rejestry = {"AX":0, "BX":1, "CX":2, "DX":3}
 
@@ -90,24 +89,27 @@ rejestry["AX"] = Register("A")
 rejestry["BX"] = Register("B")
 rejestry['CX'] = Register("C")
 rejestry['DX'] = Register("D")
+accum = [0]*8
 
-''' Przykład dodawanie
+# Przykład dodawanie
 for i in range(8):
     if i != 3 and i != 5:
-        rejestry["AX"].Write(i,1,"H")
-rejestry["BX"].Write(7, 1, "H") # 7 to najmniej znaczący bit
-add("#120", "RBH")
-'''
+        rejestry["AX"].Write(i, 1, size=1, is_high="H")
+rejestry["BX"].Write(7, 1, is_high="H") # 7 to najmniej znaczący bit
+#print(rejestry["AX"].Read(0, 8))
+print(rejestry["BX"].Read(0,8))
+add("#121", "RBH", adding=True)
+print(rejestry["BX"].Read(0,8))
 
-''' Przykład odejmowanie
+''' #Przykład odejmowanie
 for i in range(8):
     if i != 3 and i != 5:
-        rejestry["AX"].Write(i,1,"H")
-rejestry["BX"].Write(7, 1, "H") # 7 to najmniej znaczący bit
+        rejestry["AX"].Write(i,1,is_high="H")
+rejestry["BX"].Write(7, 1, is_high="H") # 7 to najmniej znaczący bit
 add("RBH", "RAH", adding=False)
 '''
 
-''' Przykład 1
+''' #Przykład 1
 for i in range(8):
     print(rejestry['AX'].Read(i, "H"), end=", ")
 copy_paste('#258', 'RAH')
@@ -115,7 +117,7 @@ for i in range(8):
     print(rejestry['AX'].Read(i, "H"), end=', ')
 '''
 
-''' Przykład 2
+''' #Przykład 2
 for i in range(8):
     print(rejestry['AX'].Read(i, "H"), end=", ")
 copy_paste('RAH', 'RCL')
