@@ -1,0 +1,14 @@
+D:\Tomek\Szkoła\Semestr 6\Architektura Systemów Komputerowych\Projekty\Zadanie 1\zadanie1\bin\Debug\zadanie1.exe.config
+D:\Tomek\Szkoła\Semestr 6\Architektura Systemów Komputerowych\Projekty\Zadanie 1\zadanie1\bin\Debug\zadanie1.exe
+D:\Tomek\Szkoła\Semestr 6\Architektura Systemów Komputerowych\Projekty\Zadanie 1\zadanie1\bin\Debug\zadanie1.pdb
+D:\Tomek\Szkoła\Semestr 6\Architektura Systemów Komputerowych\Projekty\Zadanie 1\zadanie1\obj\Debug\zadanie1.csprojAssemblyReference.cache
+D:\Tomek\Szkoła\Semestr 6\Architektura Systemów Komputerowych\Projekty\Zadanie 1\zadanie1\obj\Debug\MainWindow.g.cs
+D:\Tomek\Szkoła\Semestr 6\Architektura Systemów Komputerowych\Projekty\Zadanie 1\zadanie1\obj\Debug\App.g.cs
+D:\Tomek\Szkoła\Semestr 6\Architektura Systemów Komputerowych\Projekty\Zadanie 1\zadanie1\obj\Debug\zadanie1_MarkupCompile.cache
+D:\Tomek\Szkoła\Semestr 6\Architektura Systemów Komputerowych\Projekty\Zadanie 1\zadanie1\obj\Debug\zadanie1_MarkupCompile.lref
+D:\Tomek\Szkoła\Semestr 6\Architektura Systemów Komputerowych\Projekty\Zadanie 1\zadanie1\obj\Debug\MainWindow.baml
+D:\Tomek\Szkoła\Semestr 6\Architektura Systemów Komputerowych\Projekty\Zadanie 1\zadanie1\obj\Debug\zadanie1.g.resources
+D:\Tomek\Szkoła\Semestr 6\Architektura Systemów Komputerowych\Projekty\Zadanie 1\zadanie1\obj\Debug\zadanie1.Properties.Resources.resources
+D:\Tomek\Szkoła\Semestr 6\Architektura Systemów Komputerowych\Projekty\Zadanie 1\zadanie1\obj\Debug\zadanie1.csproj.GenerateResource.cache
+D:\Tomek\Szkoła\Semestr 6\Architektura Systemów Komputerowych\Projekty\Zadanie 1\zadanie1\obj\Debug\zadanie1.exe
+D:\Tomek\Szkoła\Semestr 6\Architektura Systemów Komputerowych\Projekty\Zadanie 1\zadanie1\obj\Debug\zadanie1.pdb

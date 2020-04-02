@@ -1,0 +1,2 @@
+SUB DL,BH
+MOV CH,DX
