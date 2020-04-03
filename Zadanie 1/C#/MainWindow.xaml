@@ -46,7 +46,7 @@
         <TextBox x:Name="ARG1Val" HorizontalAlignment="Left" Height="23" Margin="139,164,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="73" Cursor="IBeam" TextChanged="ARG1Val_TextChanged"/>
         <TextBox x:Name="ARG2Val" HorizontalAlignment="Left" Height="23" Margin="238,164,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="73" Cursor="IBeam"/>
         <Button x:Name="AddLineButton" Content="Add line" HorizontalAlignment="Left" Margin="139,200,0,0" VerticalAlignment="Top" Width="172" Height="35" Click="Button_Click" Cursor="Hand"/>
-        <Button x:Name="BackButton" Content="Back" HorizontalAlignment="Left" Margin="139,244,0,0" VerticalAlignment="Top" Width="172" Height="35" Click="Button_Click_1" Cursor="Hand"/>
+        <Button x:Name="BackButton" Content="Remove newly added line" HorizontalAlignment="Left" Margin="139,244,0,0" VerticalAlignment="Top" Width="172" Height="35" Click="Button_Click_1" Cursor="Hand"/>
         <RadioButton Content="Register mode" HorizontalAlignment="Left" Margin="511,85,0,0" VerticalAlignment="Top" Height="21" Width="120" GroupName="mode_group" Cursor="Hand"/>
         <RadioButton Content="Direct mode" HorizontalAlignment="Left" Margin="511,111,0,0" VerticalAlignment="Top" Height="21" Width="120" GroupName="mode_group" IsChecked="True" Cursor="Hand"/>
 

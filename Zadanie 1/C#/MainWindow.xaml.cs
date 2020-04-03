@@ -26,6 +26,8 @@ namespace zadanie1
 
         int new_command_length = 0;
 
+        bool new_command_added = false;
+
         public void registersReset()
         {
 
@@ -42,6 +44,23 @@ namespace zadanie1
             this.DXVal = 0;
             this.DHVal = 0;
             this.DLVal = 0;
+        }
+
+        protected static List<String> registerList = new List<String>() {
+                                        "AX",
+                                        "BX",
+                                        "CX",
+                                        "DX"
+                                        };
+
+        public bool isProperRegister(string register)
+        {
+            foreach (string item in registerList)
+            {
+                if (item.Contains(register))
+                    return true;
+            }
+            return false;
         }
 
         //*************************************GLOBAL REGISTER VARIABLES**************************************
@@ -233,39 +252,57 @@ namespace zadanie1
             else if (MOVButton.IsChecked == true)
                 przycisk = "MOV";
 
-            OutputTextBox.Text = OutputTextBox.Text + przycisk + " " + ARG1Val.Text + "," + ARG2Val.Text + "\n";
-            new_command_length = OutputTextBox.Text.Length - original_length;
-            this.DataContext = this;
-            this.AXVal += 1;
-            this.AHVal += 2;
-            this.ALVal += 3;
-            this.BXVal += 4;
-            this.BHVal += 5;
-            this.BLVal += 6;
-            this.CXVal += 7;
-            this.CHVal += 8;
-            this.CLVal += 9;
-            this.DXVal += 10;
-            this.DHVal += 11;
-            this.DLVal += 12;
+            if (ARG1Val.Text == "" | ARG2Val.Text == "")
+                MessageBox.Show("Two arguments required");
+            else if (isProperRegister(ARG1Val.Text) == true && isProperRegister(ARG2Val.Text) == true)
+            {
+                OutputTextBox.Text = OutputTextBox.Text + przycisk + " " + ARG1Val.Text + "," + ARG2Val.Text + "\n";
+                new_command_length = OutputTextBox.Text.Length - original_length;
+                new_command_added = true;
+            }
+            else
+            {
+                ARG1Val.Text = "";
+                ARG2Val.Text = "";
+                MessageBox.Show("Wrong argument!!! Available arguments: " + String.Join(", ", registerList.ToArray())); 
+            }
+                
+
+
+
+
+
+
+
+
         }
 
         private void Button_Click_1(object sender, RoutedEventArgs e)
         {
-            if (OutputTextBox.Text.Length - new_command_length >= 0)
-                OutputTextBox.Text = OutputTextBox.Text.Remove(OutputTextBox.Text.Length - new_command_length);
+            if (OutputTextBox.Text.Length - new_command_length > 0)
+            {
+                if (new_command_added)
+                {
+                    OutputTextBox.Text = OutputTextBox.Text.Remove(OutputTextBox.Text.Length - new_command_length);
+                    new_command_added = false;
+                }
+                else
+                    MessageBox.Show("Only the last line can be removed.");
+            }
+            else
+                MessageBox.Show("Command list is empty - nothing to remove.");
         }
 
         private void SaveButton_Click(object sender, RoutedEventArgs e)
         {
-            string path = @"D:\Tomek\Szkoła\Semestr 6\Architektura Systemów Komputerowych\Projekty\Zadanie 1\zadanie1\code.txt";
+            string path = @"D:\Tomek\Szkoła\Semestr 6\Architektura Systemów Komputerowych\ASK\Zadanie 1\C#\code.txt";
             File.WriteAllText(path, OutputTextBox.Text);
             MessageBox.Show("Succesfully saved.");
         }
 
         private void LoadButton_Click(object sender, RoutedEventArgs e)
         {
-            string path = @"D:\Tomek\Szkoła\Semestr 6\Architektura Systemów Komputerowych\Projekty\Zadanie 1\zadanie1\code.txt";
+            string path = @"D:\Tomek\Szkoła\Semestr 6\Architektura Systemów Komputerowych\ASK\Zadanie 1\C#\code.txt";
             OutputTextBox.Text = File.ReadAllText(path);
 
         }
