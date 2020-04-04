@@ -26,6 +26,7 @@ namespace zadanie1
 			}
 		}
 	}
+
 	public class Operations
 	{
 		public void move(Register source, Register destination, bool from_high, bool to_high)

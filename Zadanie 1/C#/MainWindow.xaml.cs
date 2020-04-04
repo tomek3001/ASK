@@ -15,7 +15,6 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using Microsoft.Win32;
 using System.Diagnostics;
-using System.Drawing;
 
 namespace zadanie1
 {
@@ -33,6 +32,8 @@ namespace zadanie1
 
         // Bool value to check if a new line was recently added to program - if so, enable removing last line
         bool new_command_added = false;
+
+        Register register = new Register();
 
         // Clear all registers
         public void registersReset()
@@ -289,18 +290,42 @@ namespace zadanie1
         private void SaveButton_Click(object sender, RoutedEventArgs e)
         {
             // Save current 
-            string path = @"D:\Tomek\Szkoła\Semestr 6\Architektura Systemów Komputerowych\ASK\Zadanie 1\C#\code.txt";
-            File.WriteAllText(path, OutputTextBox.Text);
-            MessageBox.Show("Succesfully saved.");
+            string path = "";
+            SaveFileDialog sfd = new SaveFileDialog();
+            sfd.Filter = "Text files (*.txt)|*.txt";
+            Nullable<bool> dialogOK = sfd.ShowDialog();
+            if (dialogOK == true)
+            {
+                path = sfd.FileNames[0];
+            }
+            if (path != "")
+            {
+                File.WriteAllText(path, OutputTextBox.Text);
+                MessageBox.Show("Succesfully saved.");
+            }
+            else
+                MessageBox.Show("Failed to save.");
         }
 
         private void LoadButton_Click(object sender, RoutedEventArgs e)
-        {
+        { 
             // Load saved program
-            string path = @"D:\Tomek\Szkoła\Semestr 6\Architektura Systemów Komputerowych\ASK\Zadanie 1\C#\code.txt";
-            code_lines = Convert.ToUInt32(File.ReadLines(path).Count());
-            OutputTextBox.Text = File.ReadAllText(path);
-            new_command_added = false;
+            string path = "";
+            OpenFileDialog ofd = new OpenFileDialog();
+            ofd.Multiselect = false;
+            ofd.Filter = "Text files (*.txt)|*.txt";
+
+            Nullable<bool> dialogOK = ofd.ShowDialog();
+            if (dialogOK == true)
+            {
+                path = @ofd.FileNames[0];
+            }
+            if (path != "")
+            {
+                code_lines = Convert.ToUInt32(File.ReadLines(path).Count());
+                OutputTextBox.Text = File.ReadAllText(path);
+                new_command_added = false;
+            }
         }
         private void ARG1Val_TextChanged(object sender, TextChangedEventArgs e)
         {
