@@ -327,14 +327,5 @@ namespace zadanie1
                 new_command_added = false;
             }
         }
-        private void ARG1Val_TextChanged(object sender, TextChangedEventArgs e)
-        {
-
-        }
-        private void Button_Click_2(object sender, RoutedEventArgs e)
-        { 
-        
-        }
-
     }
 }
