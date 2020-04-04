@@ -3,7 +3,7 @@ namespace zadanie1
 {
 	public class Register
 	{
-		public int dataH = 0b00000001;
+		public int dataH = 0b00000000;
 		public int dataL = 0b00000000;
 		public int Read(bool high_part)
 		{
@@ -26,7 +26,6 @@ namespace zadanie1
 			}
 		}
 	}
-
 	public class Operations
 	{
 		public void move(Register source, Register destination, bool from_high, bool to_high)
@@ -35,11 +34,10 @@ namespace zadanie1
 			destination.Write(to_high, val1);
 		}
 
-		public void add(Register source1, Register source2,Register destination, 
-			bool from_high1, bool from_high2, bool to_high,bool adding = true)
+		public int add(Register source1, Register source2, Register destination, bool adding = true)
 		{
-			int val1 = source1.Read(from_high1);
-			int val2 = source2.Read(from_high2);
+			int val1 = connetct(source1);
+			int val2 = connetct(source2);
 			int result;
 			if (adding)
 			{
@@ -53,15 +51,36 @@ namespace zadanie1
 				}
 				else
 				{
-					result = destination.Read(to_high);
+					result = val2;
 					// Ponieważ chcemy to widzieć w jakimś oknie to możemy przesyłać na przykład wartość -1 i wtedy
 					// wiemy, że coś skopane jest bo za duża wartość i wypisać, że nie obsługujemy ujemnych
-					Console.WriteLine("Action is Imposible");
+					Console.WriteLine("Brak obsługi liczb ujemnych");
+					return -1;
 				}
 			}
-			destination.Write(to_high, result);
+			if (result > 65535)
+			{
+				Console.WriteLine("Suma jest za duża");
+				return -2;
+			}
+			else {
+				string binary = Convert.ToString(result, 2).PadLeft(16, '0');
+				string first = binary.Substring(0, (int)(binary.Length / 2));
+				string last = binary.Substring((int)(binary.Length / 2), (int)(binary.Length / 2));
+
+				val1 = Convert.ToInt32(last, 2);
+				val2 = Convert.ToInt32(first, 2);
+
+				destination.Write(false, val1);
+				destination.Write(true, val2);
+				return 0;
+			}
 		}
-
-
+		// Funkcja która służy do złączenia w DUŻĄ liczbę 
+		public int connetct(Register temp)
+		{
+			int value = temp.dataH * 256 + temp.dataL;
+			return value;
+		}
 	}
 }
