@@ -20,7 +20,7 @@
         <Label x:Name="DHLabel" Content="DH" HorizontalAlignment="Left" Margin="373,46,0,0" VerticalAlignment="Top" FontFamily="Arial Black"/>
         <Label x:Name="DLLabel" Content="DL" HorizontalAlignment="Left" Margin="373,72,0,0" VerticalAlignment="Top" FontFamily="Arial Black"/>
         <TextBox x:Name="AXValWindow" HorizontalAlignment="Left" Height="23" Margin="52,24,0,0" TextWrapping="Wrap" Text="{Binding Path=AXVal, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" Width="82" FontFamily="Arial Black" Focusable="False" Cursor="No"/>
-        <TextBox x:Name="AHValWindow" HorizontalAlignment="Left" Height="23" Margin="52,50,0,0" TextWrapping="Wrap" Text="{Binding Path=AHVal, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" Width="82" TextChanged="TextBox_TextChanged" FontFamily="Arial Black" Focusable="False" Cursor="No"/>
+        <TextBox x:Name="AHValWindow" HorizontalAlignment="Left" Height="23" Margin="52,50,0,0" TextWrapping="Wrap" Text="{Binding Path=AHVal, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" Width="82" FontFamily="Arial Black" Focusable="False" Cursor="No"/>
         <TextBox x:Name="ALValWindow" HorizontalAlignment="Left" Height="23" Margin="52,76,0,0" TextWrapping="Wrap" Text="{Binding Path=ALVal, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" Width="82" FontFamily="Arial Black" Focusable="False" Cursor="No"/>
         <TextBox x:Name="BXValWindow" HorizontalAlignment="Left" Height="23" Margin="169,24,0,0" TextWrapping="Wrap" Text="{Binding Path=BXVal, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" Width="82" FontFamily="Arial Black" Focusable="False" Cursor="No"/>
         <TextBox x:Name="BHValWindow" HorizontalAlignment="Left" Height="23" Margin="169,50,0,0" TextWrapping="Wrap" Text="{Binding Path=BHVal, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" Width="82" FontFamily="Arial Black" Focusable="False" Cursor="No"/>
@@ -49,6 +49,7 @@
         <Button x:Name="BackButton" Content="Remove newly added line" HorizontalAlignment="Left" Margin="139,244,0,0" VerticalAlignment="Top" Width="172" Height="35" Click="Button_Click_1" Cursor="Hand"/>
         <RadioButton Content="Register mode" HorizontalAlignment="Left" Margin="511,85,0,0" VerticalAlignment="Top" Height="21" Width="120" GroupName="mode_group" Cursor="Hand"/>
         <RadioButton Content="Direct mode" HorizontalAlignment="Left" Margin="511,111,0,0" VerticalAlignment="Top" Height="21" Width="120" GroupName="mode_group" IsChecked="True" Cursor="Hand"/>
+        <Button Content="Show line" HorizontalAlignment="Left" Margin="410,323,0,0" VerticalAlignment="Top" Width="75" Click="Button_Click_2"/>
 
     </Grid>
 </Window>

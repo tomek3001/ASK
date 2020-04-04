@@ -15,6 +15,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using Microsoft.Win32;
 using System.Diagnostics;
+using System.Drawing;
 
 namespace zadanie1
 {
@@ -24,10 +25,16 @@ namespace zadanie1
     public partial class MainWindow : Window
     {
 
+        // Variable to calculate how many characters should be removed from code string
         int new_command_length = 0;
 
+        // Variable for counting lines of assembler code
+        uint code_lines = 0;
+
+        // Bool value to check if a new line was recently added to program - if so, enable removing last line
         bool new_command_added = false;
 
+        // Clear all registers
         public void registersReset()
         {
 
@@ -46,6 +53,7 @@ namespace zadanie1
             this.DLVal = 0;
         }
 
+        // List of available arguments
         protected static List<String> registerList = new List<String>() {
                                         "AX",
                                         "BX",
@@ -198,23 +206,11 @@ namespace zadanie1
             registersReset();
         }
 
-        private void TextBox_TextChanged(object sender, TextChangedEventArgs e)
-        {
-
-        }
-
         private void RunButton_Click(object sender, RoutedEventArgs e)
         {
-            string przycisk = "";
-            if (ADDButton.IsChecked == true)
-                przycisk = "ADD";
-            else if (SUBButton.IsChecked == true)
-                przycisk = "SUB";
-            else if (MOVButton.IsChecked == true)
-                przycisk = "MOV";
-            
-            OutputTextBox.Text = "Wciśnięty został przycisk RUN, a wybrana operacja to " + przycisk +
-                ", podczas gdy argument pierwszy to " + ARG1Val.Text + ", a argument drugi to " + ARG2Val.Text + ".";
+            Char[] separators = { '\n', ' ', ',' };
+            String[] lines = OutputTextBox.Text.Split(separators, StringSplitOptions.RemoveEmptyEntries);
+            MessageBox.Show(lines[0] + "\n" + lines[1] + "\n" + lines[2] + "\n" + lines[3]);
         }
 
         private void StepButton_Click(object sender, RoutedEventArgs e)
@@ -230,20 +226,19 @@ namespace zadanie1
                 ", podczas gdy argument pierwszy to " + ARG1Val.Text + ", a argument drugi to " + ARG2Val.Text + ".";
         }
 
+        // Reset all variables and text boxes
         private void ClearButton_Click(object sender, RoutedEventArgs e)
         {
             OutputTextBox.Text = "";
+            code_lines = 0;
             registersReset();
-        }
-
-        private void ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
         { 
             int original_length = OutputTextBox.Text.Length;
+
+            // Check which command is selected
             string przycisk = "";
             if (ADDButton.IsChecked == true)
                 przycisk = "ADD";
@@ -251,12 +246,14 @@ namespace zadanie1
                 przycisk = "SUB";
             else if (MOVButton.IsChecked == true)
                 przycisk = "MOV";
-
+            
+            // Add new line of code, validate arguments before adding
             if (ARG1Val.Text == "" | ARG2Val.Text == "")
                 MessageBox.Show("Two arguments required");
             else if (isProperRegister(ARG1Val.Text) == true && isProperRegister(ARG2Val.Text) == true)
             {
-                OutputTextBox.Text = OutputTextBox.Text + przycisk + " " + ARG1Val.Text + "," + ARG2Val.Text + "\n";
+                code_lines += 1;
+                OutputTextBox.Text = OutputTextBox.Text + code_lines + ". " + przycisk + " " + ARG1Val.Text + ", " + ARG2Val.Text + "\n";
                 new_command_length = OutputTextBox.Text.Length - original_length;
                 new_command_added = true;
             }
@@ -268,23 +265,19 @@ namespace zadanie1
             }
                 
 
-
-
-
-
-
-
-
         }
 
         private void Button_Click_1(object sender, RoutedEventArgs e)
         {
-            if (OutputTextBox.Text.Length - new_command_length > 0)
+
+            // Remove newly added line - only if possible
+            if (OutputTextBox.Text.Length > 0)
             {
                 if (new_command_added)
                 {
                     OutputTextBox.Text = OutputTextBox.Text.Remove(OutputTextBox.Text.Length - new_command_length);
                     new_command_added = false;
+                    code_lines -= 1;
                 }
                 else
                     MessageBox.Show("Only the last line can be removed.");
@@ -295,6 +288,7 @@ namespace zadanie1
 
         private void SaveButton_Click(object sender, RoutedEventArgs e)
         {
+            // Save current 
             string path = @"D:\Tomek\Szkoła\Semestr 6\Architektura Systemów Komputerowych\ASK\Zadanie 1\C#\code.txt";
             File.WriteAllText(path, OutputTextBox.Text);
             MessageBox.Show("Succesfully saved.");
@@ -302,14 +296,12 @@ namespace zadanie1
 
         private void LoadButton_Click(object sender, RoutedEventArgs e)
         {
+            // Load saved program
             string path = @"D:\Tomek\Szkoła\Semestr 6\Architektura Systemów Komputerowych\ASK\Zadanie 1\C#\code.txt";
+            code_lines = Convert.ToUInt32(File.ReadLines(path).Count());
             OutputTextBox.Text = File.ReadAllText(path);
-
+            new_command_added = false;
         }
 
-        private void ARG1Val_TextChanged(object sender, TextChangedEventArgs e)
-        {
-
-        }
     }
 }
