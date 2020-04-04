@@ -33,7 +33,15 @@ namespace zadanie1
         // Bool value to check if a new line was recently added to program - if so, enable removing last line
         bool new_command_added = false;
 
-        Register register = new Register();
+        // Current line counter (step mode)
+        int current_step = 0;
+
+        //
+        Char[] step_separators = { '\n' };
+        Char[] line_separators = { ' ', ','};
+        //String[] lines;
+
+
 
         // Clear all registers
         public void registersReset()
@@ -70,6 +78,23 @@ namespace zadanie1
                     return true;
             }
             return false;
+        }
+
+        // Delay function
+        async Task TimeDelay()
+        {
+            await Task.Delay(500);
+        }
+
+        public void PerformAction(string current_action)
+        {
+
+            String[] lines = current_action.Split(line_separators, StringSplitOptions.RemoveEmptyEntries);
+            string from = lines[3];
+            string to = lines[2];
+            string operation = lines[1];
+
+
         }
 
         //*************************************GLOBAL REGISTER VARIABLES**************************************
@@ -207,24 +232,46 @@ namespace zadanie1
             registersReset();
         }
 
-        private void RunButton_Click(object sender, RoutedEventArgs e)
+        private async void RunButton_Click(object sender, RoutedEventArgs e)
         {
-            Char[] separators = { '\n', ' ', ',' };
-            String[] lines = OutputTextBox.Text.Split(separators, StringSplitOptions.RemoveEmptyEntries);
-            MessageBox.Show(lines[0] + "\n" + lines[1] + "\n" + lines[2] + "\n" + lines[3]);
+
+            String[] lines = OutputTextBox.Text.Split(step_separators, StringSplitOptions.RemoveEmptyEntries);
+
+            if (lines.Length == 0)
+                MessageBox.Show("There is no code to run!");
+            else
+            {
+                for (; current_step < lines.Length; current_step++)
+                {
+                    CurrStepVal.Text = lines[current_step];
+                    PerformAction(CurrStepVal.Text);
+                    await TimeDelay();
+                }
+            MessageBox.Show("Reached the on of the code.");
+            }
+
         }
 
         private void StepButton_Click(object sender, RoutedEventArgs e)
         {
-            string przycisk = "";
-            if (ADDButton.IsChecked == true)
-                przycisk = "ADD";
-            else if (SUBButton.IsChecked == true)
-                przycisk = "SUB";
-            else if (MOVButton.IsChecked == true)
-                przycisk = "MOV";
-            OutputTextBox.Text = "Wciśnięty został przycisk STEP, a wybrana operacja to " + przycisk + 
-                ", podczas gdy argument pierwszy to " + ARG1Val.Text + ", a argument drugi to " + ARG2Val.Text + ".";
+
+            String[] lines = OutputTextBox.Text.Split(step_separators, StringSplitOptions.RemoveEmptyEntries);
+            if (lines.Length == 0)
+                MessageBox.Show("There is no code to run!");
+            else
+            {
+                if (current_step < lines.Length)
+                {
+                    CurrStepVal.Text = lines[current_step];
+                    PerformAction(CurrStepVal.Text);
+                    current_step += 1;
+                    if (current_step == lines.Length)
+                        MessageBox.Show("You have reached the on of the code.");
+                }
+                else
+                    MessageBox.Show("You have already reached the end of the code!");
+            }
+
         }
 
         // Reset all variables and text boxes
@@ -233,6 +280,8 @@ namespace zadanie1
             OutputTextBox.Text = "";
             code_lines = 0;
             registersReset();
+            current_step = 0;
+            CurrStepVal.Text = "";
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
@@ -326,6 +375,11 @@ namespace zadanie1
                 OutputTextBox.Text = File.ReadAllText(path);
                 new_command_added = false;
             }
+        }
+
+        private void ARG1Val_TextChanged(object sender, TextChangedEventArgs e)
+        {
+
         }
     }
 }
