@@ -68,21 +68,23 @@ namespace zadanie1
                     {
                         work.intToRegister(from, registers["Accum"]);
                         work.add(registers["Accum"], registers[to], registers["Accum"]);
+                        work.move(registers["Accum"], registers[to], true, true);
+                        work.move(registers["Accum"], registers[to], false, false);
                     }
                     else
                     {
-                        work.add(registers[from], registers[to], registers["Accum"]);
+                        work.add(registers[from], registers[to], registers[to]);
                     }
                     break;
                 case "SUB":
                     if (from[0] == '#')
                     {
                         work.intToRegister(from, registers["Accum"]);
-                        work.add(registers[to], registers["Accum"], registers["Accum"], false);
+                        work.add(registers[to], registers["Accum"], registers[to], false);
                     }
                     else
                     {
-                        work.add(registers[to], registers[from], registers["Accum"], false);
+                        work.add(registers[to], registers[from], registers[to], false);
                     }
                     break;
                 case "MOV":
@@ -143,7 +145,7 @@ namespace zadanie1
         {
             foreach (string item in registerList)
             {
-                if (item.Contains(register))
+                if (item.Equals(register))
                     return true;
             }
             return false;
@@ -163,7 +165,10 @@ namespace zadanie1
             string to = lines[2];
             string operation = lines[1];
             execute(from, to, operation);
-            registersUpdate();
+            Console.WriteLine("Rejestr AX:");
+            Console.WriteLine(registers["AX"].dataH);
+            Console.WriteLine(registers["AX"].dataL);
+            Console.WriteLine("\n\n");
 
         }
 
