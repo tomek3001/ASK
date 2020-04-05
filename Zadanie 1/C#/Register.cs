@@ -1,8 +1,10 @@
 ﻿using System;
+
 namespace zadanie1
 {
 	public class Register
 	{
+		public string name;
 		public int dataH = 0b00000000;
 		public int dataL = 0b00000000;
 		public int Read(bool high_part)
@@ -63,7 +65,8 @@ namespace zadanie1
 				Console.WriteLine("Suma jest za duża");
 				return -2;
 			}
-			else {
+			else
+			{
 				string binary = Convert.ToString(result, 2).PadLeft(16, '0');
 				string first = binary.Substring(0, (int)(binary.Length / 2));
 				string last = binary.Substring((int)(binary.Length / 2), (int)(binary.Length / 2));
@@ -81,6 +84,21 @@ namespace zadanie1
 		{
 			int value = temp.dataH * 256 + temp.dataL;
 			return value;
+		}
+		public void intToRegister(string from, Register destination)
+		{
+			int end = from.Length;
+			string sub = from.Substring(0, end);
+			int num;
+			int.TryParse(sub, out num);
+			string binary = Convert.ToString(num, 2).PadLeft(16, '0');
+			var first = binary.Substring(0, (int)(binary.Length / 2));
+			var last = binary.Substring((int)(binary.Length / 2), (int)(binary.Length / 2));
+			int val1 = Convert.ToInt32(last, 2);
+			int val2 = Convert.ToInt32(first, 2);
+
+			destination.Write(false, val1);
+			destination.Write(true, val2);
 		}
 	}
 }
