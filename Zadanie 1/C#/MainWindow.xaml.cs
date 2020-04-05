@@ -104,19 +104,31 @@ namespace zadanie1
         public void registersReset()
         {
 
+            foreach (var key in registers.Keys)
+            {
+                registers[key].dataH = 0;
+                registers[key].dataL = 0;
+                registersUpdate();
+            }
+
+        }
+
+        public void registersUpdate()
+        {
+
             this.DataContext = this;
-            this.AXVal = 0;
-            this.AHVal = 0;
-            this.ALVal = 0;
-            this.BXVal = 0;
-            this.BHVal = 0;
-            this.BLVal = 0;
-            this.CXVal = 0;
-            this.CHVal = 0;
-            this.CLVal = 0;
-            this.DXVal = 0;
-            this.DHVal = 0;
-            this.DLVal = 0;
+            this.AXVal = work.connetct(registers["AX"]);
+            this.AHVal = registers["AX"].dataH;
+            this.ALVal = registers["AX"].dataL;
+            this.BXVal = work.connetct(registers["BX"]);
+            this.BHVal = registers["BX"].dataH;
+            this.BLVal = registers["BX"].dataL;
+            this.CXVal = work.connetct(registers["CX"]);
+            this.CHVal = registers["CX"].dataH;
+            this.CLVal = registers["CX"].dataL;
+            this.DXVal = work.connetct(registers["DX"]);
+            this.DHVal = registers["DX"].dataH;
+            this.DLVal = registers["DX"].dataL;
         }
 
         // List of available arguments
@@ -151,10 +163,7 @@ namespace zadanie1
             string to = lines[2];
             string operation = lines[1];
             execute(from, to, operation);
-            Console.WriteLine("Rejestr AX:");
-            Console.WriteLine(registers["AX"].dataH);
-            Console.WriteLine(registers["AX"].dataL);
-            Console.WriteLine("\n\n");
+            registersUpdate();
 
         }
 
