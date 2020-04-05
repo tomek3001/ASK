@@ -92,8 +92,7 @@ namespace zadanie1
             String[] lines = current_action.Split(line_separators, StringSplitOptions.RemoveEmptyEntries);
             string from = lines[3];
             string to = lines[2];
-            string operation = lines[1];
-
+            string operation_temp = lines[1];
 
         }
 
@@ -296,11 +295,12 @@ namespace zadanie1
                 przycisk = "SUB";
             else if (MOVButton.IsChecked == true)
                 przycisk = "MOV";
-            
+
+
             // Add new line of code, validate arguments before adding
             if (ARG1Val.Text == "" | ARG2Val.Text == "")
                 MessageBox.Show("Two arguments required");
-            else if (isProperRegister(ARG1Val.Text) == true && isProperRegister(ARG2Val.Text) == true)
+            else if (isProperRegister(ARG1Val.Text) == true && (isProperRegister(ARG2Val.Text)  == true || (ARG2Val.Text[0] == '#' && uint.TryParse(ARG2Val.Text.TrimStart('#'), out _) )) )
             {
                 code_lines += 1;
                 OutputTextBox.Text = OutputTextBox.Text + code_lines + ". " + przycisk + " " + ARG1Val.Text + ", " + ARG2Val.Text + "\n";
@@ -311,7 +311,7 @@ namespace zadanie1
             {
                 ARG1Val.Text = "";
                 ARG2Val.Text = "";
-                MessageBox.Show("Wrong argument!!! Available arguments: " + String.Join(", ", registerList.ToArray())); 
+                MessageBox.Show("Wrong argument!!! Available arguments: " + String.Join(", ", registerList.ToArray()) + ". If you want to enter an integer, use #<int> formatting (only second argument can be a number)."); 
             }
                 
 

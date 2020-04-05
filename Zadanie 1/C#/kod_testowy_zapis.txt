@@ -1,5 +1,1 @@
-1. SUB CX, DX
-2. SUB CX, DX
-3. MOV CX, DX
-4. ADD CX, DX
-5. SUB CX, DX
+1. ADD AX, #20
