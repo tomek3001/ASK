@@ -296,7 +296,6 @@ namespace zadanie1
             else if (MOVButton.IsChecked == true)
                 przycisk = "MOV";
 
-
             // Add new line of code, validate arguments before adding
             if (ARG1Val.Text == "" | ARG2Val.Text == "")
                 MessageBox.Show("Two arguments required");
