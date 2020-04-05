@@ -41,7 +41,64 @@ namespace zadanie1
         Char[] line_separators = { ' ', ','};
         //String[] lines;
 
+        static Dictionary<string, Register> generate_registers()
+        {
+            Register AX = new Register();
+            Register BX = new Register();
+            Register CX = new Register();
+            Register DX = new Register();
+            Register Accum = new Register();
+            Dictionary<string, Register> registers = new Dictionary<string, Register>();
+            registers.Add("AX", AX);
+            registers.Add("BX", BX);
+            registers.Add("CX", CX);
+            registers.Add("DX", DX);
+            registers.Add("Accum", Accum);
+            return registers;
+        }
 
+        public Dictionary<string, Register> registers = generate_registers();
+        Operations work = new Operations();
+        public void execute(string from, string to, string operation)
+        {
+            switch (operation)
+            {
+                case "ADD":
+                    if (from[0].Equals("#"))
+                    {
+                        work.intToRegister(from, registers["Accum"]);
+                        work.add(registers["Accum"], registers[to], registers["Accum"]);
+                    }
+                    else
+                    {
+                        work.add(registers[from], registers[to], registers["Accum"]);
+                    }
+                    break;
+                case "SUB":
+                    if (from[0].Equals("#"))
+                    {
+                        work.intToRegister(from, registers["Accum"]);
+                        work.add(registers[to], registers["Accum"], registers["Accum"], false);
+                    }
+                    else
+                    {
+                        work.add(registers[to], registers[from], registers["Accum"], false);
+                    }
+                    break;
+                case "MOV":
+                    if (from[0].Equals(""))
+                    {
+                        work.intToRegister(from, registers["Accum"]);
+                        work.move(registers["Accum"], registers[to], true, true);
+                        work.move(registers["Accum"], registers[to], false, false);
+                    }
+                    work.move(registers[from], registers[to], true, true);
+                    work.move(registers[from], registers[to], false, false);
+                    break;
+                default:
+                    break;
+            }
+        }
 
         // Clear all registers
         public void registersReset()
