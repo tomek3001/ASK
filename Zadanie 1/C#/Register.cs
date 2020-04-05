@@ -96,7 +96,6 @@ namespace zadanie1
 			var last = binary.Substring((int)(binary.Length / 2), (int)(binary.Length / 2));
 			int val1 = Convert.ToInt32(last, 2);
 			int val2 = Convert.ToInt32(first, 2);
-
 			destination.Write(false, val1);
 			destination.Write(true, val2);
 		}

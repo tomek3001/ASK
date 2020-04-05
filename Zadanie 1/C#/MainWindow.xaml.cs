@@ -64,7 +64,7 @@ namespace zadanie1
             switch (operation)
             {
                 case "ADD":
-                    if (from[0].Equals("#"))
+                    if (from[0] == '#')
                     {
                         work.intToRegister(from, registers["Accum"]);
                         work.add(registers["Accum"], registers[to], registers["Accum"]);
@@ -75,7 +75,7 @@ namespace zadanie1
                     }
                     break;
                 case "SUB":
-                    if (from[0].Equals("#"))
+                    if (from[0] == '#')
                     {
                         work.intToRegister(from, registers["Accum"]);
                         work.add(registers[to], registers["Accum"], registers["Accum"], false);
@@ -86,7 +86,7 @@ namespace zadanie1
                     }
                     break;
                 case "MOV":
-                    if (from[0].Equals(""))
+                    if (from[0] == '#')
                     {
                         work.intToRegister(from, registers["Accum"]);
                         work.move(registers["Accum"], registers[to], true, true);
@@ -149,7 +149,12 @@ namespace zadanie1
             String[] lines = current_action.Split(line_separators, StringSplitOptions.RemoveEmptyEntries);
             string from = lines[3];
             string to = lines[2];
-            string operation_temp = lines[1];
+            string operation = lines[1];
+            execute(from, to, operation);
+            Console.WriteLine("Rejestr AX:");
+            Console.WriteLine(registers["AX"].dataH);
+            Console.WriteLine(registers["AX"].dataL);
+            Console.WriteLine("\n\n");
 
         }
 
