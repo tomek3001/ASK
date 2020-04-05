@@ -94,8 +94,11 @@ namespace zadanie1
                         work.move(registers["Accum"], registers[to], true, true);
                         work.move(registers["Accum"], registers[to], false, false);
                     }
-                    work.move(registers[from], registers[to], true, true);
-                    work.move(registers[from], registers[to], false, false);
+                    else
+                    {
+                        work.move(registers[from], registers[to], true, true);
+                        work.move(registers[from], registers[to], false, false);
+                    }
                     break;
                 default:
                     break;
@@ -117,20 +120,19 @@ namespace zadanie1
 
         public void registersUpdate()
         {
-
             this.DataContext = this;
             this.AXVal = work.connetct(registers["AX"]);
-            this.AHVal = registers["AX"].dataH;
-            this.ALVal = registers["AX"].dataL;
+            AHValWindow.Text = Convert.ToString(registers["AX"].dataH, 2);
+            ALValWindow.Text = Convert.ToString(registers["AX"].dataL, 2);
             this.BXVal = work.connetct(registers["BX"]);
-            this.BHVal = registers["BX"].dataH;
-            this.BLVal = registers["BX"].dataL;
+            BHValWindow.Text = Convert.ToString(registers["BX"].dataH, 2);
+            BLValWindow.Text = Convert.ToString(registers["BX"].dataL, 2);
             this.CXVal = work.connetct(registers["CX"]);
-            this.CHVal = registers["CX"].dataH;
-            this.CLVal = registers["CX"].dataL;
+            CHValWindow.Text = Convert.ToString(registers["CX"].dataH, 2);
+            CLValWindow.Text = Convert.ToString(registers["CX"].dataL, 2);
             this.DXVal = work.connetct(registers["DX"]);
-            this.DHVal = registers["DX"].dataH;
-            this.DLVal = registers["DX"].dataL;
+            DHValWindow.Text = Convert.ToString(registers["DX"].dataH, 2);
+            DLValWindow.Text = Convert.ToString(registers["DX"].dataL, 2);
         }
 
         // List of available arguments
@@ -154,7 +156,7 @@ namespace zadanie1
         // Delay function
         async Task TimeDelay()
         {
-            await Task.Delay(500);
+            await Task.Delay(50);
         }
 
         public void PerformAction(string current_action)
@@ -169,6 +171,7 @@ namespace zadanie1
             Console.WriteLine(registers["AX"].dataH);
             Console.WriteLine(registers["AX"].dataL);
             Console.WriteLine("\n\n");
+            registersUpdate();
 
         }
 
@@ -183,27 +186,6 @@ namespace zadanie1
         public static readonly DependencyProperty AXValProperty =
             DependencyProperty.Register("AXVal", typeof(int), typeof(MainWindow));
 
-        public int AHVal
-        {
-            get { return (int)GetValue(AHValProperty); }
-            set { SetValue(AHValProperty, value); }
-
-        }
-
-        public static readonly DependencyProperty AHValProperty =
-            DependencyProperty.Register("AHVal", typeof(int), typeof(MainWindow));
-
-
-        public int ALVal
-        {
-            get { return (int)GetValue(ALValProperty); }
-            set { SetValue(ALValProperty, value); }
-
-        }
-
-        public static readonly DependencyProperty ALValProperty =
-            DependencyProperty.Register("ALVal", typeof(int), typeof(MainWindow));
-
 
         public int BXVal
         {
@@ -215,26 +197,6 @@ namespace zadanie1
         public static readonly DependencyProperty BXValProperty =
             DependencyProperty.Register("BXVal", typeof(int), typeof(MainWindow));
 
-        public int BHVal
-        {
-            get { return (int)GetValue(BHValProperty); }
-            set { SetValue(BHValProperty, value); }
-
-        }
-
-        public static readonly DependencyProperty BHValProperty =
-            DependencyProperty.Register("BHVal", typeof(int), typeof(MainWindow));
-
-        public int BLVal
-        {
-            get { return (int)GetValue(BLValProperty); }
-            set { SetValue(BLValProperty, value); }
-
-        }
-
-        public static readonly DependencyProperty BLValProperty =
-            DependencyProperty.Register("BLVal", typeof(int), typeof(MainWindow));
-
         public int CXVal
         {
             get { return (int)GetValue(CXValProperty); }
@@ -245,26 +207,6 @@ namespace zadanie1
         public static readonly DependencyProperty CXValProperty =
             DependencyProperty.Register("CXVal", typeof(int), typeof(MainWindow));
 
-        public int CHVal
-        {
-            get { return (int)GetValue(CHValProperty); }
-            set { SetValue(CHValProperty, value); }
-
-        }
-
-        public static readonly DependencyProperty CHValProperty =
-            DependencyProperty.Register("CHVal", typeof(int), typeof(MainWindow));
-
-        public int CLVal
-        {
-            get { return (int)GetValue(CLValProperty); }
-            set { SetValue(CLValProperty, value); }
-
-        }
-
-        public static readonly DependencyProperty CLValProperty =
-            DependencyProperty.Register("CLVal", typeof(int), typeof(MainWindow));
-
         public int DXVal
         {
             get { return (int)GetValue(DXValProperty); }
@@ -274,26 +216,6 @@ namespace zadanie1
 
         public static readonly DependencyProperty DXValProperty =
             DependencyProperty.Register("DXVal", typeof(int), typeof(MainWindow));
-
-        public int DHVal
-        {
-            get { return (int)GetValue(DHValProperty); }
-            set { SetValue(DHValProperty, value); }
-
-        }
-
-        public static readonly DependencyProperty DHValProperty =
-            DependencyProperty.Register("DHVal", typeof(int), typeof(MainWindow));
-
-        public int DLVal
-        {
-            get { return (int)GetValue(DLValProperty); }
-            set { SetValue(DLValProperty, value); }
-
-        }
-
-        public static readonly DependencyProperty DLValProperty =
-            DependencyProperty.Register("DLVal", typeof(int), typeof(MainWindow));
 
         //****************************************************************************************************
 
