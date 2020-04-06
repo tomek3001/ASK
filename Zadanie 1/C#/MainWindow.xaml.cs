@@ -266,7 +266,7 @@ namespace zadanie1
                     PerformAction(CurrStepVal.Text);
                     await TimeDelay();
                 }
-            MessageBox.Show("Reached the on of the code.");
+            MessageBox.Show("Reached the end of the code.");
             }
 
         }
@@ -285,7 +285,7 @@ namespace zadanie1
                     PerformAction(CurrStepVal.Text);
                     current_step += 1;
                     if (current_step == lines.Length)
-                        MessageBox.Show("You have reached the on of the code.");
+                        MessageBox.Show("You have reached the end of the code.");
                 }
                 else
                     MessageBox.Show("You have already reached the end of the code!");

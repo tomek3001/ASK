@@ -38,17 +38,17 @@
         <RadioButton x:Name="ADDButton" Content="ADD" HorizontalAlignment="Left" Margin="22,166,0,0" VerticalAlignment="Top" GroupName="operations_group" FontFamily="Arial Black" IsChecked="True" Cursor="Hand"/>
         <RadioButton x:Name="SUBButton" Content="SUB" HorizontalAlignment="Left" Margin="22,186,0,0" VerticalAlignment="Top" GroupName="operations_group" FontFamily="Arial Black" Cursor="Hand"/>
         <RadioButton x:Name="MOVButton" Content="MOV" HorizontalAlignment="Left" Margin="22,206,0,0" VerticalAlignment="Top" GroupName="operations_group" FontFamily="Arial Black" Cursor="Hand"/>
-        <Label Content="Operacja:" HorizontalAlignment="Left" Margin="22,135,0,0" VerticalAlignment="Top" FontFamily="Arial Black"/>
-        <Button x:Name="SaveButton" Content="Save" HorizontalAlignment="Left" Margin="511,151,0,0" VerticalAlignment="Top" Width="75" Click="SaveButton_Click" Cursor="Hand"/>
-        <Button x:Name="LoadButton" Content="Load" HorizontalAlignment="Left" Margin="595,151,0,0" VerticalAlignment="Top" Width="75" Click="LoadButton_Click" Cursor="Hand"/>
-        <Label Content="Argument 1" HorizontalAlignment="Left" Margin="139,133,0,0" VerticalAlignment="Top"/>
-        <Label Content="Argument 2" HorizontalAlignment="Left" Margin="238,133,0,0" VerticalAlignment="Top"/>
-        <TextBox x:Name="ARG1Val" HorizontalAlignment="Left" Height="23" Margin="139,164,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="73" Cursor="IBeam"/>
-        <TextBox x:Name="ARG2Val" HorizontalAlignment="Left" Height="23" Margin="238,164,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="73" Cursor="IBeam"/>
-        <Button x:Name="AddLineButton" Content="Add line" HorizontalAlignment="Left" Margin="139,200,0,0" VerticalAlignment="Top" Width="172" Height="35" Click="Button_Click" Cursor="Hand"/>
-        <Button x:Name="BackButton" Content="Remove newly added line" HorizontalAlignment="Left" Margin="139,244,0,0" VerticalAlignment="Top" Width="172" Height="35" Click="Button_Click_1" Cursor="Hand"/>
+        <Label Content="Operation:" HorizontalAlignment="Left" Margin="22,135,0,0" VerticalAlignment="Top" FontFamily="Arial Black"/>
+        <Button x:Name="SaveButton" Content="Save" HorizontalAlignment="Left" Margin="511,151,0,0" VerticalAlignment="Top" Width="75" Click="SaveButton_Click" Cursor="Hand" FontFamily="Arial Black"/>
+        <Button x:Name="LoadButton" Content="Load" HorizontalAlignment="Left" Margin="595,151,0,0" VerticalAlignment="Top" Width="75" Click="LoadButton_Click" Cursor="Hand" FontFamily="Arial Black"/>
+        <Label Content="Argument 1" HorizontalAlignment="Left" Margin="139,133,0,0" VerticalAlignment="Top" FontFamily="Arial Black"/>
+        <Label Content="Argument 2" HorizontalAlignment="Left" Margin="238,133,0,0" VerticalAlignment="Top" FontFamily="Arial Black"/>
+        <TextBox x:Name="ARG1Val" HorizontalAlignment="Left" Height="23" Margin="139,164,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="73" Cursor="IBeam" FontFamily="Arial Black"/>
+        <TextBox x:Name="ARG2Val" HorizontalAlignment="Left" Height="23" Margin="238,164,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="73" Cursor="IBeam" FontFamily="Arial Black"/>
+        <Button x:Name="AddLineButton" Content="Add line" HorizontalAlignment="Left" Margin="139,200,0,0" VerticalAlignment="Top" Width="172" Height="35" Click="Button_Click" Cursor="Hand" FontFamily="Arial Black"/>
+        <Button x:Name="BackButton" Content="Remove newly added line" HorizontalAlignment="Left" Margin="139,244,0,0" VerticalAlignment="Top" Width="172" Height="35" Click="Button_Click_1" Cursor="Hand" FontFamily="Arial Black"/>
         <TextBox x:Name="CurrStepVal" HorizontalAlignment="Left" Height="23" Margin="169,367,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="142" FontFamily="Arial Black" Cursor="No" Focusable="False" BorderBrush="#FF8F8F8F" Background="White"/>
-        <Label Content="Current step:" HorizontalAlignment="Left" Margin="169,341,0,0" VerticalAlignment="Top"/>
+        <Label Content="Current step:" HorizontalAlignment="Left" Margin="169,341,0,0" VerticalAlignment="Top" FontFamily="Arial Black"/>
 
     </Grid>
 </Window>

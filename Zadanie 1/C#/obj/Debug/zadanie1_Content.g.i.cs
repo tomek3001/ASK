@@ -8,6 +8,6 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-[assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("like.png")]
+[assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("ikona.ico")]
 
 
