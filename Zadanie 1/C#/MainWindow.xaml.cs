@@ -66,25 +66,51 @@ namespace zadanie1
                 case "ADD":
                     if (from[0] == '#')
                     {
-                        work.intToRegister(from, registers["Accum"]);
-                        work.add(registers["Accum"], registers[to], registers["Accum"]);
-                        work.move(registers["Accum"], registers[to], true, true);
-                        work.move(registers["Accum"], registers[to], false, false);
+                        int exception = work.intToRegister(from, registers["Accum"]);
+                        if (exception != -1)
+                        {
+                            exception = work.add(registers["Accum"], registers[to], registers["Accum"]);
+                            if (exception == -2)
+                            {
+                                MessageBox.Show("Sum is too big, operation skipped");
+                            }
+                            else
+                            {
+                                work.move(registers["Accum"], registers[to], true, true);
+                                work.move(registers["Accum"], registers[to], false, false);
+                            }
+                        }
+                        else
+                        {
+                            MessageBox.Show("Sum is too big, operation skipped");
+                        }
                     }
                     else
                     {
-                        work.add(registers[from], registers[to], registers[to]);
+                        int exception = work.add(registers[from], registers[to], registers[to]);
+                        if (exception == -2)
+                        {
+                            MessageBox.Show("Sum is too big, operation skipped");
+                        }
                     }
                     break;
                 case "SUB":
                     if (from[0] == '#')
                     {
                         work.intToRegister(from, registers["Accum"]);
-                        work.add(registers[to], registers["Accum"], registers[to], false);
+                        int exception = work.add(registers[to], registers["Accum"], registers[to], false);
+                        if (exception == -1)
+                        {
+                            MessageBox.Show("Our program doesn't support negative numbers, operation skipped");
+                        }
                     }
                     else
                     {
-                        work.add(registers[to], registers[from], registers[to], false);
+                        int exception = work.add(registers[to], registers[from], registers[to], false);
+                        if (exception == -1)
+                        {
+                            MessageBox.Show("Our program doesn't support negative numbers, operation skipped");
+                        }
                     }
                     break;
                 case "MOV":
@@ -122,17 +148,17 @@ namespace zadanie1
         {
             this.DataContext = this;
             this.AXVal = work.connetct(registers["AX"]);
-            AHValWindow.Text = Convert.ToString(registers["AX"].dataH, 2);
-            ALValWindow.Text = Convert.ToString(registers["AX"].dataL, 2);
+            AHValWindow.Text = Convert.ToString(registers["AX"].dataH, 2).PadLeft(8, '0');
+            ALValWindow.Text = Convert.ToString(registers["AX"].dataL, 2).PadLeft(8, '0');
             this.BXVal = work.connetct(registers["BX"]);
-            BHValWindow.Text = Convert.ToString(registers["BX"].dataH, 2);
-            BLValWindow.Text = Convert.ToString(registers["BX"].dataL, 2);
+            BHValWindow.Text = Convert.ToString(registers["BX"].dataH, 2).PadLeft(8, '0');
+            BLValWindow.Text = Convert.ToString(registers["BX"].dataL, 2).PadLeft(8, '0');
             this.CXVal = work.connetct(registers["CX"]);
-            CHValWindow.Text = Convert.ToString(registers["CX"].dataH, 2);
-            CLValWindow.Text = Convert.ToString(registers["CX"].dataL, 2);
+            CHValWindow.Text = Convert.ToString(registers["CX"].dataH, 2).PadLeft(8, '0');
+            CLValWindow.Text = Convert.ToString(registers["CX"].dataL, 2).PadLeft(8, '0');
             this.DXVal = work.connetct(registers["DX"]);
-            DHValWindow.Text = Convert.ToString(registers["DX"].dataH, 2);
-            DLValWindow.Text = Convert.ToString(registers["DX"].dataL, 2);
+            DHValWindow.Text = Convert.ToString(registers["DX"].dataH, 2).PadLeft(8, '0');
+            DLValWindow.Text = Convert.ToString(registers["DX"].dataL, 2).PadLeft(8, '0');
         }
 
         // List of available arguments
@@ -167,10 +193,6 @@ namespace zadanie1
             string to = lines[2];
             string operation = lines[1];
             execute(from, to, operation);
-            Console.WriteLine("Rejestr AX:");
-            Console.WriteLine(registers["AX"].dataH);
-            Console.WriteLine(registers["AX"].dataL);
-            Console.WriteLine("\n\n");
             registersUpdate();
 
         }

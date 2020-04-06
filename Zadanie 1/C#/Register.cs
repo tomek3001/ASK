@@ -44,25 +44,22 @@ namespace zadanie1
 			if (adding)
 			{
 				result = val1 + val2;
+				Console.WriteLine(result);
 			}
 			else
 			{
-				if (val1 > val2)
+				if (val1 >= val2)
 				{
 					result = val1 - val2;
 				}
 				else
 				{
 					result = val2;
-					// Ponieważ chcemy to widzieć w jakimś oknie to możemy przesyłać na przykład wartość -1 i wtedy
-					// wiemy, że coś skopane jest bo za duża wartość i wypisać, że nie obsługujemy ujemnych
-					Console.WriteLine("Brak obsługi liczb ujemnych");
 					return -1;
 				}
 			}
 			if (result > 65535)
 			{
-				Console.WriteLine("Suma jest za duża");
 				return -2;
 			}
 			else
@@ -85,20 +82,28 @@ namespace zadanie1
 			int value = temp.dataH * 256 + temp.dataL;
 			return value;
 		}
-		public void intToRegister(string from, Register destination)
+		public int intToRegister(string from, Register destination)
 		{
 			int end = from.Length - 1;
 			string sub = from.Substring(1, end);
 			int num;
 			int.TryParse(sub, out num);
-			string binary = Convert.ToString(num, 2).PadLeft(16, '0');
-			Console.WriteLine(binary);
-			var first = binary.Substring(0, (int)(binary.Length / 2));
-			var last = binary.Substring((int)(binary.Length / 2), (int)(binary.Length / 2));
-			int val1 = Convert.ToInt32(last, 2);
-			int val2 = Convert.ToInt32(first, 2);
-			destination.Write(false, val1);
-			destination.Write(true, val2);
+			if (num <= 65535)
+			{
+				string binary = Convert.ToString(num, 2).PadLeft(16, '0');
+				Console.WriteLine(binary);
+				var first = binary.Substring(0, (int)(binary.Length / 2));
+				var last = binary.Substring((int)(binary.Length / 2), (int)(binary.Length / 2));
+				int val1 = Convert.ToInt32(last, 2);
+				int val2 = Convert.ToInt32(first, 2);
+				destination.Write(false, val1);
+				destination.Write(true, val2);
+				return 0;
+			}
+			else
+			{
+				return -1;
+			}
 		}
 	}
 }
