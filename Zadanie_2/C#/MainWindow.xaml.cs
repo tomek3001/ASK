@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -56,9 +57,44 @@ namespace zadanie1
             registers.Add("Accum", Accum);
             return registers;
         }
+        Stack myStack = new Stack();
 
         public Dictionary<string, Register> registers = generate_registers();
         Operations work = new Operations();
+
+        public int interupt_handling(String number, String to)
+        {
+            int num;
+            int.TryParse(number,out num);
+            switch (num){
+                case 0:
+                    System.Environment.Exit(0);
+                    break;
+                case 2:
+                    DateTime time = DateTime.Now;
+                    int year = time.Year;
+                    int month = time.Month;
+                    int day = time.Day;
+                    int hour = time.Hour;
+                    int minute = time.Minute;
+                    int second = time.Second;
+                    int milisecond = time.Millisecond;
+                    String next = "";
+                    if (to == "AX") { next = "BX"; }
+                    else if (to == "BX") { next = "CX"; }
+                    else if (to == "CX") { next = "DX"; }
+                    else return -1;     // exception -1 out of bounds
+                    registers[to].dataH = hour;
+                    registers[to].dataL = minute;
+                    registers[next].dataH = second;
+                    registers[next].dataL = milisecond;
+                    Console.WriteLine(registers["AX"].dataH);
+                    break;
+                default:
+                    break;
+            }
+            return 0;
+        }
         public void execute(string from, string to, string operation)
         {
             switch (operation)
@@ -125,6 +161,16 @@ namespace zadanie1
                         work.move(registers[from], registers[to], true, true);
                         work.move(registers[from], registers[to], false, false);
                     }
+                    break;
+                case "PUSH":
+                    String name = (from[0] + "X");
+                    myStack.Push(registers[name]);
+                    break;
+                case "POP":
+                    myStack.Pop();
+                    break;
+                case "INT":
+                    interupt_handling(from, to);
                     break;
                 default:
                     break;
