@@ -49,6 +49,9 @@
         <Button x:Name="BackButton" Content="Remove newly added line" HorizontalAlignment="Left" Margin="139,244,0,0" VerticalAlignment="Top" Width="172" Height="35" Click="Button_Click_1" Cursor="Hand" FontFamily="Arial Black"/>
         <TextBox x:Name="CurrStepVal" HorizontalAlignment="Left" Height="23" Margin="169,367,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="142" FontFamily="Arial Black" Cursor="No" Focusable="False" BorderBrush="#FF8F8F8F" Background="White"/>
         <Label Content="Current step:" HorizontalAlignment="Left" Margin="169,341,0,0" VerticalAlignment="Top" FontFamily="Arial Black"/>
+        <RadioButton x:Name="PUSHButton" Content="PUSH" HorizontalAlignment="Left" Margin="22,226,0,0" VerticalAlignment="Top" GroupName="operations_group" FontFamily="Arial Black" Cursor="Hand"/>
+        <RadioButton x:Name="POPButton" Content="POP" HorizontalAlignment="Left" Margin="22,246,0,0" VerticalAlignment="Top" GroupName="operations_group" FontFamily="Arial Black" Cursor="Hand" Checked="POPButton_Checked"/>
+        <RadioButton x:Name="INTButton" Content="INT" HorizontalAlignment="Left" Margin="22,266,0,0" VerticalAlignment="Top" GroupName="operations_group" FontFamily="Arial Black" Cursor="Hand" Checked="POPButton_Checked"/>
 
     </Grid>
 </Window>

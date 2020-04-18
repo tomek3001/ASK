@@ -62,37 +62,40 @@ namespace zadanie1
         public Dictionary<string, Register> registers = generate_registers();
         Operations work = new Operations();
 
-        public int interupt_handling(String number, String to)
+        public int interupt_handling(String function, String interruption)
         {
-            int num;
-            int.TryParse(number,out num);
-            switch (num){
-                case 0:
-                    System.Environment.Exit(0);
-                    break;
-                case 2:
-                    DateTime time = DateTime.Now;
-                    int year = time.Year;
-                    int month = time.Month;
-                    int day = time.Day;
-                    int hour = time.Hour;
-                    int minute = time.Minute;
-                    int second = time.Second;
-                    int milisecond = time.Millisecond;
-                    String next = "";
-                    if (to == "AX") { next = "BX"; }
-                    else if (to == "BX") { next = "CX"; }
-                    else if (to == "CX") { next = "DX"; }
-                    else return -1;     // exception -1 out of bounds
-                    registers[to].dataH = hour;
-                    registers[to].dataL = minute;
-                    registers[next].dataH = second;
-                    registers[next].dataL = milisecond;
-                    Console.WriteLine(registers["AX"].dataH);
-                    break;
-                default:
-                    break;
-            }
+
+            MessageBox.Show("No to przerywanko. " +
+                "Przerwanie " + interruption + ", funkcja " + function + ".");
+            //int num;
+            //int.TryParse(number,out num);
+            //switch (num){
+            //    case 0:
+            //        System.Environment.Exit(0);
+            //        break;
+            //    case 2:
+            //        DateTime time = DateTime.Now;
+            //        int year = time.Year;
+            //        int month = time.Month;
+            //        int day = time.Day;
+            //        int hour = time.Hour;
+            //        int minute = time.Minute;
+            //        int second = time.Second;
+            //        int milisecond = time.Millisecond;
+            //        String next = "";
+            //        if (to == "AX") { next = "BX"; }
+            //        else if (to == "BX") { next = "CX"; }
+            //        else if (to == "CX") { next = "DX"; }
+            //        else return -1;     // exception -1 out of bounds
+            //        registers[to].dataH = hour;
+            //        registers[to].dataL = minute;
+            //        registers[next].dataH = second;
+            //        registers[next].dataL = milisecond;
+            //        Console.WriteLine(registers["AX"].dataH);
+            //        break;
+            //    default:
+            //        break;
+            //}
             return 0;
         }
         public void execute(string from, string to, string operation)
@@ -215,11 +218,35 @@ namespace zadanie1
                                         "DX"
                                         };
 
+        // List of available functions
+        protected static List<String> functionList = new List<String>() {
+                                        "0",
+                                        "2A",
+                                        "36",
+                                        "2C",
+                                        "2",
+                                        "1",
+                                        "5",
+                                        "30",
+                                        "2E",
+                                        "2D"
+                                        };
+
         public bool isProperRegister(string register)
         {
             foreach (string item in registerList)
             {
                 if (item.Equals(register))
+                    return true;
+            }
+            return false;
+        }
+
+        public bool isProperFunction(string function)
+        {
+            foreach (string item in functionList)
+            {
+                if (item.Equals(function))
                     return true;
             }
             return false;
@@ -235,12 +262,29 @@ namespace zadanie1
         {
 
             String[] lines = current_action.Split(line_separators, StringSplitOptions.RemoveEmptyEntries);
-            string from = lines[3];
-            string to = lines[2];
             string operation = lines[1];
-            execute(from, to, operation);
-            registersUpdate();
-
+            if (operation == "ADD" | operation == "SUB" | operation == "MOV")
+            {
+                string from = lines[3];
+                string to = lines[2];
+                execute(from, to, operation);
+                registersUpdate();
+            }
+            else if (operation == "PUSH" | operation == "POP")
+            {
+                string register = lines[2];
+                if (operation == "PUSH")
+                    MessageBox.Show("No to pushowanko z " + register + ".");
+                else if (operation == "POP")
+                    MessageBox.Show("No to popowanko na " + register + ".");
+                execute("", register, operation);
+            }
+            else if (operation == "INT")
+            {
+                string function = lines[3];
+                string interruption = lines[2];
+                execute(function, interruption, operation);
+            }
         }
 
         //*************************************GLOBAL REGISTER VARIABLES**************************************
@@ -347,38 +391,109 @@ namespace zadanie1
             registersReset();
             current_step = 0;
             CurrStepVal.Text = "";
+            ARG1Val.Text = "";
+            ARG2Val.Text = "";
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
-        { 
+        {
             int original_length = OutputTextBox.Text.Length;
+            int operation_type = 0;
 
             // Check which command is selected
             string przycisk = "";
             if (ADDButton.IsChecked == true)
+            {
                 przycisk = "ADD";
+                operation_type = 1;
+            } 
             else if (SUBButton.IsChecked == true)
+            { 
                 przycisk = "SUB";
+                operation_type = 1;
+            }
             else if (MOVButton.IsChecked == true)
+            {
                 przycisk = "MOV";
+                operation_type = 1;
+            } 
+            else if (PUSHButton.IsChecked == true)
+            {
+                przycisk = "PUSH";
+                operation_type = 2;
+            } 
+            else if (POPButton.IsChecked == true)
+            {
+                przycisk = "POP";
+                operation_type = 2;
+            } 
+            else if (INTButton.IsChecked == true)
+            {
+                przycisk = "INT";
+                operation_type = 3;
+            }
 
             // Add new line of code, validate arguments before adding
-            if (ARG1Val.Text == "" | ARG2Val.Text == "")
-                MessageBox.Show("Two arguments required");
-            else if (isProperRegister(ARG1Val.Text) == true && (isProperRegister(ARG2Val.Text)  == true || (ARG2Val.Text[0] == '#' && uint.TryParse(ARG2Val.Text.TrimStart('#'), out _) )) )
+            if (operation_type == 1)
             {
-                code_lines += 1;
-                OutputTextBox.Text = OutputTextBox.Text + code_lines + ". " + przycisk + " " + ARG1Val.Text + ", " + ARG2Val.Text + "\n";
-                new_command_length = OutputTextBox.Text.Length - original_length;
-                new_command_added = true;
+                if (ARG1Val.Text == "" | ARG2Val.Text == "")
+                    MessageBox.Show("Two arguments required");
+                else if (isProperRegister(ARG1Val.Text) == true && (isProperRegister(ARG2Val.Text) == true || (ARG2Val.Text[0] == '#' && uint.TryParse(ARG2Val.Text.TrimStart('#'), out _))))
+                {
+                    code_lines += 1;
+                    OutputTextBox.Text = OutputTextBox.Text + code_lines + ". " + przycisk + " " + ARG1Val.Text + ", " + ARG2Val.Text + "\n";
+                    new_command_length = OutputTextBox.Text.Length - original_length;
+                    new_command_added = true;
+                }
+                else
+                {
+                    ARG1Val.Text = "";
+                    ARG2Val.Text = "";
+                    MessageBox.Show("Wrong argument!!! Available arguments: " + String.Join(", ", registerList.ToArray()) + 
+                        ". If you want to enter an integer, use #<int> formatting (only second argument can be a number).");
+                }
             }
-            else
+            else if (operation_type == 2)
             {
-                ARG1Val.Text = "";
-                ARG2Val.Text = "";
-                MessageBox.Show("Wrong argument!!! Available arguments: " + String.Join(", ", registerList.ToArray()) + ". If you want to enter an integer, use #<int> formatting (only second argument can be a number)."); 
+                if (ARG1Val.Text == "" && ARG2Val.Text == "")
+                    MessageBox.Show("No argument given.");
+                else if (isProperRegister(ARG1Val.Text) == true && ARG2Val.Text == "")
+                {
+                    code_lines += 1;
+                    OutputTextBox.Text = OutputTextBox.Text + code_lines + ". " + przycisk + " " + ARG1Val.Text + "\n";
+                    new_command_length = OutputTextBox.Text.Length - original_length;
+                    new_command_added = true;
+                }
+                else if (isProperRegister(ARG1Val.Text) == true && ARG2Val.Text != "")
+                    MessageBox.Show("PUSH/PULL require only one argument.");
+                else
+                {
+                    ARG1Val.Text = "";
+                    ARG2Val.Text = "";
+                    MessageBox.Show("Wrong argument!!! Available arguments: " + String.Join(", ", registerList.ToArray()) + ".");
+                }
             }
-                
+            else if (operation_type == 3)
+            {
+                if (ARG1Val.Text == "" | ARG2Val.Text == "")
+                    MessageBox.Show("Two arguments required");
+                else if (ARG1Val.Text == "21" && isProperFunction(ARG2Val.Text) == true)
+                {
+                    code_lines += 1;
+                    OutputTextBox.Text = OutputTextBox.Text + code_lines + ". " + przycisk + " " + ARG1Val.Text + ", " + ARG2Val.Text + "\n";
+                    new_command_length = OutputTextBox.Text.Length - original_length;
+                    new_command_added = true;
+                }
+                else
+                {
+                    ARG1Val.Text = "";
+                    ARG2Val.Text = "";
+                    MessageBox.Show("Wrong argument!!! The first arugment is an interruption number and the second argument is a function numer. " +
+                        "Available interruptions: 21. Available functions: " + String.Join(", ", functionList.ToArray()) + ".");
+                }
+            }
+
+
 
         }
 
@@ -443,6 +558,11 @@ namespace zadanie1
         }
 
         private void ARG1Val_TextChanged(object sender, TextChangedEventArgs e)
+        {
+
+        }
+
+        private void POPButton_Checked(object sender, RoutedEventArgs e)
         {
 
         }
