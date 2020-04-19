@@ -52,6 +52,8 @@
         <RadioButton x:Name="PUSHButton" Content="PUSH" HorizontalAlignment="Left" Margin="22,226,0,0" VerticalAlignment="Top" GroupName="operations_group" FontFamily="Arial Black" Cursor="Hand"/>
         <RadioButton x:Name="POPButton" Content="POP" HorizontalAlignment="Left" Margin="22,246,0,0" VerticalAlignment="Top" GroupName="operations_group" FontFamily="Arial Black" Cursor="Hand" Checked="POPButton_Checked"/>
         <RadioButton x:Name="INTButton" Content="INT" HorizontalAlignment="Left" Margin="22,266,0,0" VerticalAlignment="Top" GroupName="operations_group" FontFamily="Arial Black" Cursor="Hand" Checked="POPButton_Checked"/>
+        <TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" Text="TextBlock" VerticalAlignment="Top"/>
+        <TextBlock x:Name="IntTextBlock" HorizontalAlignment="Left" Margin="511,35,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="38" Width="159" Foreground="Black"/>
 
     </Grid>
 </Window>
