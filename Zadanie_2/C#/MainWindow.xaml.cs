@@ -17,13 +17,18 @@ using System.Windows.Shapes;
 using Microsoft.Win32;
 using System.Diagnostics;
 
+
 namespace zadanie1
 {
+
+
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
     public partial class MainWindow : Window
     {
+
+
 
         // Variable to calculate how many characters should be removed from code string
         int new_command_length = 0;
@@ -58,44 +63,61 @@ namespace zadanie1
             return registers;
         }
         Stack myStack = new Stack();
+        private char KeyPress(object sender, System.Windows.Forms.KeyPressEventArgs e)
+        {
+            return e.KeyChar;
+        }
 
         public Dictionary<string, Register> registers = generate_registers();
         Operations work = new Operations();
 
-        public int interupt_handling(String function, String interruption)
+        public int interupt_handling(String function, String number)
         {
+            DateTime time = DateTime.Now;
+            //Na razie argument number nie jest używane ponieważ obsługujemy tylko przerwanie 21 oraz wiele jego funkcji
+            switch (function)
+            {
+                case "0":
+                    System.Environment.Exit(0);
+                    break;
+                case "2A":
+                    int year = time.Year;
+                    int month = time.Month;
+                    int day = time.Day;
+                    String dayOfWeek = time.DayOfWeek.ToString().PadLeft(16, '0');
+                    string year_string = Convert.ToString(year, 2);
+                    var first = year_string.Substring(0, (int)(year_string.Length / 2));
+                    var last = year_string.Substring((int)(year_string.Length / 2), (int)(year_string.Length / 2));
+                    int val1 = Convert.ToInt32(last, 2);
+                    int val2 = Convert.ToInt32(first, 2);
+                    registers["AX"].Write(false, val1); //Zapisanie roku
+                    registers["AX"].Write(true, val2);
 
-            MessageBox.Show("No to przerywanko. " +
-                "Przerwanie " + interruption + ", funkcja " + function + ".");
-            //int num;
-            //int.TryParse(number,out num);
-            //switch (num){
-            //    case 0:
-            //        System.Environment.Exit(0);
-            //        break;
-            //    case 2:
-            //        DateTime time = DateTime.Now;
-            //        int year = time.Year;
-            //        int month = time.Month;
-            //        int day = time.Day;
-            //        int hour = time.Hour;
-            //        int minute = time.Minute;
-            //        int second = time.Second;
-            //        int milisecond = time.Millisecond;
-            //        String next = "";
-            //        if (to == "AX") { next = "BX"; }
-            //        else if (to == "BX") { next = "CX"; }
-            //        else if (to == "CX") { next = "DX"; }
-            //        else return -1;     // exception -1 out of bounds
-            //        registers[to].dataH = hour;
-            //        registers[to].dataL = minute;
-            //        registers[next].dataH = second;
-            //        registers[next].dataL = milisecond;
-            //        Console.WriteLine(registers["AX"].dataH);
-            //        break;
-            //    default:
-            //        break;
-            //}
+                    registers["DX"].Write(true, month); //Zapisanie miesiąca
+                    registers["DX"].Write(false, day);  //Zapisanie dnia
+                    break;
+
+                case "2C":
+                    int hour = time.Hour;
+                    int minute = time.Minute;
+                    int second = time.Second;
+                    int milisecond = time.Millisecond / 10;
+                    registers["CX"].Write(true, hour);
+                    registers["CX"].Write(false, minute);
+                    registers["DX"].Write(true, second);
+                    registers["DX"].Write(false, milisecond);
+                    break;
+                case "36":
+                    DriveInfo cDrive = new DriveInfo("C");
+                    if (cDrive.IsReady)
+                    {
+                        Console.WriteLine("\tFree space:\t{0}",
+                            cDrive.AvailableFreeSpace);
+                    }
+                    break;
+                default:
+                    break;
+            }
             return 0;
         }
         public void execute(string from, string to, string operation)

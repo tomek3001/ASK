@@ -91,7 +91,6 @@ namespace zadanie1
 			if (num <= 65535)
 			{
 				string binary = Convert.ToString(num, 2).PadLeft(16, '0');
-				Console.WriteLine(binary);
 				var first = binary.Substring(0, (int)(binary.Length / 2));
 				var last = binary.Substring((int)(binary.Length / 2), (int)(binary.Length / 2));
 				int val1 = Convert.ToInt32(last, 2);
