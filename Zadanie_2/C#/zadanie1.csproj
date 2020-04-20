@@ -71,7 +71,14 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="bitmap_win.xaml.cs">
+      <DependentUpon>bitmap_win.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Register.cs" />
+    <Page Include="bitmap_win.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

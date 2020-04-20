@@ -75,51 +75,92 @@ namespace zadanie1
         {
             DateTime time = DateTime.Now;
             //Na razie argument number nie jest używane ponieważ obsługujemy tylko przerwanie 21 oraz wiele jego funkcji
-            switch (function)
+            if (number == "21")
             {
-                case "0":
-                    System.Environment.Exit(0);
-                    break;
-                case "2A":
-                    int year = time.Year;
-                    int month = time.Month;
-                    int day = time.Day;
-                    String dayOfWeek = time.DayOfWeek.ToString().PadLeft(16, '0');
-                    string year_string = Convert.ToString(year, 2);
-                    var first = year_string.Substring(0, (int)(year_string.Length / 2));
-                    var last = year_string.Substring((int)(year_string.Length / 2), (int)(year_string.Length / 2));
-                    int val1 = Convert.ToInt32(last, 2);
-                    int val2 = Convert.ToInt32(first, 2);
-                    registers["AX"].Write(false, val1); //Zapisanie roku
-                    registers["AX"].Write(true, val2);
+                switch (function)
+                {
+                    case "0":
+                        //Zamknięcie Programu
+                        System.Environment.Exit(0);
+                        break;
+                    case "1":   //
+                        bool success = int.TryParse(IntTextBox.Text, out int x);
+                        if (success)
+                            registers["AX"].Write(false, x);
+                        break;
+                    case "5":
+                        char c = Convert.ToChar(registers["AX"].dataL);
+#pragma warning disable CA1305 // Określ interfejs IFormatProvider
 
-                    registers["DX"].Write(true, month); //Zapisanie miesiąca
-                    registers["DX"].Write(false, day);  //Zapisanie dnia
-                    break;
+                        IntTextBox.Text += c.ToString();
+                        break;
+#pragma warning restore CA1305 // Określ interfejs IFormatProvider
+                        break;
+                    case "2A":
+                        //Pobranie i wpisanie do rejestrów A oraz D daty
+                        int year = time.Year;
+                        int month = time.Month;
+                        int day = time.Day;
+                        String dayOfWeek = time.DayOfWeek.ToString().PadLeft(16, '0');
+                        string year_string = Convert.ToString(year, 2);
+                        var first = year_string.Substring(0, (int)(year_string.Length / 2));
+                        var last = year_string.Substring((int)(year_string.Length / 2), (int)(year_string.Length / 2));
+                        int val1 = Convert.ToInt32(last, 2);
+                        int val2 = Convert.ToInt32(first, 2);
+                        registers["AX"].Write(false, val1); //Zapisanie roku
+                        registers["AX"].Write(true, val2);
 
-                case "2C":
-                    int hour = time.Hour;
-                    int minute = time.Minute;
-                    int second = time.Second;
-                    int milisecond = time.Millisecond / 10;
-                    registers["CX"].Write(true, hour);
-                    registers["CX"].Write(false, minute);
-                    registers["DX"].Write(true, second);
-                    registers["DX"].Write(false, milisecond);
-                    break;
-                case "36":
-                    DriveInfo cDrive = new DriveInfo("C");
-                    if (cDrive.IsReady)
-                    {
-                        Console.WriteLine("\tFree space:\t{0}",
-                            cDrive.AvailableFreeSpace);
-                    }
-                    break;
-                default:
-                    break;
+                        registers["DX"].Write(true, month); //Zapisanie miesiąca
+                        registers["DX"].Write(false, day);  //Zapisanie dnia
+                        break;
+
+                    case "2C":
+                        //Pobranie i wpisanie do rejestrów C oraz D godziny
+                        int hour = time.Hour;
+                        int minute = time.Minute;
+                        int second = time.Second;
+                        int milisecond = time.Millisecond / 10; //Ta zmienna przechowuje setne sekundt
+                        registers["CX"].Write(true, hour);
+                        registers["CX"].Write(false, minute);
+                        registers["DX"].Write(true, second);
+                        registers["DX"].Write(false, milisecond);
+                        break;
+
+                    case "3C":
+                        String root = @"New folder";
+                        if (!Directory.Exists(root))
+                        {
+                            Directory.CreateDirectory(root);
+                            MessageBox.Show("New folder created");
+                        }
+                        else
+                            MessageBox.Show("Folder already exists.");
+                        break;
+
+                    default:
+                        break;
+                }
+            }
+            else if (number == "15")
+            {
+                switch (function)
+                {
+                    case "15":
+                        //Pobierane są wartości rejestrów C oraz D gdzie D to dolna część
+                        //Liczba utworzona z tych dwóch rejestrów oznacza czas jaki program będzie czekać
+                        int big = registers["CX"].dataL + registers["CX"].dataH * 256;
+                        int small = registers["DX"].dataL + registers["DX"].dataH * 256;
+                        int wait_time = big * 256 + small;
+                        System.Threading.Thread.Sleep(wait_time);
+                        break;
+                    default:
+                        break;
+                }
             }
             return 0;
         }
+
+
         public void execute(string from, string to, string operation)
         {
             switch (operation)
@@ -251,7 +292,7 @@ namespace zadanie1
                                         "5",
                                         "30",
                                         "2E",
-                                        "2D"
+                                        "3C"
                                         };
 
         public bool isProperRegister(string register)
@@ -415,6 +456,7 @@ namespace zadanie1
             CurrStepVal.Text = "";
             ARG1Val.Text = "";
             ARG2Val.Text = "";
+            IntTextBox.Text = "";
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
