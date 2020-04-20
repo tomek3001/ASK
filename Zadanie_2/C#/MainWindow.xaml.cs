@@ -28,7 +28,7 @@ namespace zadanie1
     public partial class MainWindow : Window
     {
 
-
+        WriteableBitmap writableBmp = BitmapFactory.New(16, 16);
 
         // Variable to calculate how many characters should be removed from code string
         int new_command_length = 0;
@@ -45,7 +45,6 @@ namespace zadanie1
         //
         Char[] step_separators = { '\n' };
         Char[] line_separators = { ' ', ','};
-        //String[] lines;
 
         static Dictionary<string, Register> generate_registers()
         {
@@ -53,6 +52,7 @@ namespace zadanie1
             Register BX = new Register();
             Register CX = new Register();
             Register DX = new Register();
+            Register Stack = new Register();
             Register Accum = new Register();
             Dictionary<string, Register> registers = new Dictionary<string, Register>();
             registers.Add("AX", AX);
@@ -60,9 +60,13 @@ namespace zadanie1
             registers.Add("CX", CX);
             registers.Add("DX", DX);
             registers.Add("Accum", Accum);
+            registers.Add("Stack", Stack);
             return registers;
         }
-        Stack myStack = new Stack();
+
+        int[] tabH = { -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1 };
+        int[] tabL = { -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1 };
+
         private char KeyPress(object sender, System.Windows.Forms.KeyPressEventArgs e)
         {
             return e.KeyChar;
@@ -74,6 +78,7 @@ namespace zadanie1
         public int interupt_handling(String function, String number)
         {
             DateTime time = DateTime.Now;
+
             //Na razie argument number nie jest używane ponieważ obsługujemy tylko przerwanie 21 oraz wiele jego funkcji
             if (number == "21")
             {
@@ -126,7 +131,7 @@ namespace zadanie1
                         registers["DX"].Write(false, milisecond);
                         break;
 
-                    case "3C":
+                    case "39":
                         String root = @"New folder";
                         if (!Directory.Exists(root))
                         {
@@ -157,24 +162,37 @@ namespace zadanie1
                         break;
                 }
             }
-            else if(number == "10")
+            else if (number == "10")
             {
                 switch (function)
                 {
                     //Ustawienie wartości piksela
                     case "0C":
-                        int pix_color = registers["AX"].dataL;
-                        int col = work.connetct(registers["CX"]);
-                        int row = work.connetct(registers["DX"]);
-                        //Something with pixel to set value
-                        //...
+                        byte pix_color = Convert.ToByte(work.connetct(registers["AX"]));
+                        if (pix_color > 255)
+                            pix_color = 255;
+                        Bitmap.Source = writableBmp;
+                        using (writableBmp.GetBitmapContext())
+                        {
+                            Color color = Color.FromRgb(pix_color, pix_color, pix_color);
+                            writableBmp.Clear(color);
+                        }
                         break;
-
                     case "0D":
-                        col = work.connetct(registers["CX"]);
-                        row = work.connetct(registers["DX"]);
-                        //int pix_color = get_pixel_color(col, row);
-                        Bitmap.Source = new BitmapImage(new Uri(@"pack://application:,,,/zadanie1;component/Bitmap1.bmp"));
+                        using (writableBmp.GetBitmapContext())
+                        {
+                            var color_2 = writableBmp.GetPixel(0, 0);
+                            registers["DX"].Write(false, color_2.R);
+                        }
+                        break;
+                    case "3":
+                        Point mysz = Mouse.GetPosition(Application.Current.MainWindow);
+                        IntTextBox.Text = "Współrzędne kursora: \nx: " + mysz.X + " y: " + mysz.Y;
+                        string binaryX = "#" + Convert.ToString((int)mysz.X, 10);
+                        work.intToRegister(binaryX, registers["CX"]);
+                        string binaryY = "#" + Convert.ToString((int)mysz.Y, 10);
+                        work.intToRegister(binaryY, registers["DX"]);
+
                         break;
                 }
             }
@@ -251,11 +269,37 @@ namespace zadanie1
                     }
                     break;
                 case "PUSH":
-                    String name = (from[0] + "X");
-                    myStack.Push(registers[name]);
+                    String name = (to[0] + "X");
+                    bool flag = true;
+                    for (int i = 0; i < 16; i++)
+                    {
+                        name = (to[0] + "X");
+                        if (tabH[i] < 0 && flag)
+                        {
+                            tabH[i] = registers[name].dataH; tabL[i] = registers[name].dataL;
+                            flag = false;
+                            int temp = registers["Stack"].dataL - 1;
+                            registers["Stack"].Write(false, temp);
+                            break;
+                        }
+                    }
                     break;
                 case "POP":
-                    myStack.Pop();
+                    flag = true;
+                    for (int i = 15; i >= 0; i--)
+                    {
+                        name = (to[0] + "X");
+                        if (tabH[i] >= 0 && flag)
+                        {
+                            registers[name].Write(false, tabL[i]);
+                            registers[name].Write(true, tabH[i]);
+                            tabH[i] = -1; tabL[i] = -1;
+                            flag = false;
+                            int temp = registers["Stack"].dataL + 1;
+                            registers["Stack"].Write(false, temp);
+                            break;
+                        }
+                    }
                     break;
                 case "INT":
                     interupt_handling(from, to);
@@ -273,8 +317,9 @@ namespace zadanie1
             {
                 registers[key].dataH = 0;
                 registers[key].dataL = 0;
-                registersUpdate();
             }
+            registers["Stack"].Write(false, 16);
+            registersUpdate();
 
         }
 
@@ -293,6 +338,7 @@ namespace zadanie1
             this.DXVal = work.connetct(registers["DX"]);
             DHValWindow.Text = Convert.ToString(registers["DX"].dataH, 2).PadLeft(8, '0');
             DLValWindow.Text = Convert.ToString(registers["DX"].dataL, 2).PadLeft(8, '0');
+            this.StackPointer = work.connetct(registers["Stack"]);
         }
 
         // List of available arguments
@@ -303,18 +349,24 @@ namespace zadanie1
                                         "DX"
                                         };
 
-        // List of available functions
-        protected static List<String> functionList = new List<String>() {
+        // Lists of available functions
+        protected static List<String> functionList21 = new List<String>() {
                                         "0",
-                                        "2A",
-                                        "36",
-                                        "2C",
-                                        "2",
                                         "1",
+                                        "2A",
+                                        "2C",
                                         "5",
-                                        "30",
-                                        "2E",
-                                        "3C"
+                                        "39"
+                                        };
+
+        protected static List<String> functionList15 = new List<String>() {
+                                        "15"
+                                        };
+
+        protected static List<String> functionList10 = new List<String>() {
+                                        "0C",
+                                        "0D",
+                                        "3"
                                         };
 
         public bool isProperRegister(string register)
@@ -327,8 +379,23 @@ namespace zadanie1
             return false;
         }
 
-        public bool isProperFunction(string function)
+        public bool isProperFunction(string function, string interrupt)
         {
+            List<String> functionList = new List<string>(){
+                
+            };
+            switch (interrupt)
+            {
+                case "21":
+                    functionList = functionList21;
+                    break;
+                case "15":
+                    functionList = functionList15;
+                    break;
+                case "10":
+                    functionList = functionList10;
+                    break;
+            }
             foreach (string item in functionList)
             {
                 if (item.Equals(function))
@@ -353,23 +420,19 @@ namespace zadanie1
                 string from = lines[3];
                 string to = lines[2];
                 execute(from, to, operation);
-                registersUpdate();
             }
             else if (operation == "PUSH" | operation == "POP")
             {
                 string register = lines[2];
-                if (operation == "PUSH")
-                    MessageBox.Show("No to pushowanko z " + register + ".");
-                else if (operation == "POP")
-                    MessageBox.Show("No to popowanko na " + register + ".");
                 execute("", register, operation);
             }
             else if (operation == "INT")
             {
                 string function = lines[3];
-                string interruption = lines[2];
-                execute(function, interruption, operation);
+                string interrupt = lines[2];
+                execute(function, interrupt, operation);
             }
+            registersUpdate();
         }
 
         //*************************************GLOBAL REGISTER VARIABLES**************************************
@@ -413,6 +476,15 @@ namespace zadanie1
 
         public static readonly DependencyProperty DXValProperty =
             DependencyProperty.Register("DXVal", typeof(int), typeof(MainWindow));
+        public int StackPointer
+        {
+            get { return (int)GetValue(StackPointerProperty); }
+            set { SetValue(StackPointerProperty, value); }
+
+        }
+
+        public static readonly DependencyProperty StackPointerProperty =
+            DependencyProperty.Register("StackPointer", typeof(int), typeof(MainWindow));
 
         //****************************************************************************************************
 
@@ -479,9 +551,6 @@ namespace zadanie1
             ARG1Val.Text = "";
             ARG2Val.Text = "";
             IntTextBox.Text = "";
-            Bitmap.Source = new BitmapImage(new Uri(@"pack://application:,,,/zadanie1;component/Bitmap1.bmp"));
-            Point mysz = Mouse.GetPosition(Application.Current.MainWindow);
-            Console.WriteLine("Współrzędne x: " + mysz.X + " y: " + mysz.Y);
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
@@ -566,7 +635,7 @@ namespace zadanie1
             {
                 if (ARG1Val.Text == "" | ARG2Val.Text == "")
                     MessageBox.Show("Two arguments required");
-                else if (ARG1Val.Text == "21" && isProperFunction(ARG2Val.Text) == true)
+                else if (isProperFunction(ARG2Val.Text, ARG1Val.Text) == true)
                 {
                     code_lines += 1;
                     OutputTextBox.Text = OutputTextBox.Text + code_lines + ". " + przycisk + " " + ARG1Val.Text + ", " + ARG2Val.Text + "\n";
@@ -577,8 +646,9 @@ namespace zadanie1
                 {
                     ARG1Val.Text = "";
                     ARG2Val.Text = "";
-                    MessageBox.Show("Wrong argument!!! The first arugment is an interruption number and the second argument is a function numer. " +
-                        "Available interruptions: 21. Available functions: " + String.Join(", ", functionList.ToArray()) + ".");
+                    MessageBox.Show("Wrong argument!!! The first arugment is an interrupt number and the second argument is a function numer. " +
+                        "Available interruptions: \n10 with functions: " + String.Join(", ", functionList10.ToArray()) + "; " + "\n15 with functions: " + 
+                        String.Join(", ", functionList15.ToArray()) + "; " + "\n21 with functions: " + String.Join(", ", functionList21.ToArray()) + ".");
                 }
             }
 

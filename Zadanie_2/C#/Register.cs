@@ -44,7 +44,6 @@ namespace zadanie1
 			if (adding)
 			{
 				result = val1 + val2;
-				Console.WriteLine(result);
 			}
 			else
 			{

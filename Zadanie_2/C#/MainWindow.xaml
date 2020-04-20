@@ -54,6 +54,8 @@
         <RadioButton x:Name="INTButton" Content="INT" HorizontalAlignment="Left" Margin="22,266,0,0" VerticalAlignment="Top" GroupName="operations_group" FontFamily="Arial Black" Cursor="Hand" Checked="POPButton_Checked"/>
         <TextBox x:Name="IntTextBox" HorizontalAlignment="Left" Height="50" Margin="511,24,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="159" FontFamily="Arial Black" Cursor="No" Focusable="False" BorderBrush="#FF8F8F8F" Background="White"/>
         <Image x:Name="Bitmap" HorizontalAlignment="Left" Height="16" Margin="403,200,0,0" VerticalAlignment="Top" Width="16"/>
+        <Label x:Name="StackPointerLabek" Content="Stack Pointer" HorizontalAlignment="Left" Margin="22,325,0,0" VerticalAlignment="Top" FontFamily="Arial Black"/>
+        <TextBox x:Name="StackPointerWindow" HorizontalAlignment="Left" Height="23" Margin="22,349,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="99" FontFamily="Arial Black" Focusable="False" Cursor="No" Text="{Binding Path=StackPointer, UpdateSourceTrigger=PropertyChanged}"/>
 
     </Grid>
 </Window>
