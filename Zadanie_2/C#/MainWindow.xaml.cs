@@ -157,6 +157,28 @@ namespace zadanie1
                         break;
                 }
             }
+            else if(number == "10")
+            {
+                switch (function)
+                {
+                    //Ustawienie wartości piksela
+                    case "0C":
+                        int pix_color = registers["AX"].dataL;
+                        int col = work.connetct(registers["CX"]);
+                        int row = work.connetct(registers["DX"]);
+                        //Something with pixel to set value
+                        //...
+                        break;
+
+                    case "0D":
+                        col = work.connetct(registers["CX"]);
+                        row = work.connetct(registers["DX"]);
+                        //int pix_color = get_pixel_color(col, row);
+                        Bitmap.Source = new BitmapImage(new Uri(@"pack://application:,,,/zadanie1;component/Bitmap1.bmp"));
+                        break;
+                }
+            }
+
             return 0;
         }
 
@@ -457,6 +479,9 @@ namespace zadanie1
             ARG1Val.Text = "";
             ARG2Val.Text = "";
             IntTextBox.Text = "";
+            Bitmap.Source = new BitmapImage(new Uri(@"pack://application:,,,/zadanie1;component/Bitmap1.bmp"));
+            Point mysz = Mouse.GetPosition(Application.Current.MainWindow);
+            Console.WriteLine("Współrzędne x: " + mysz.X + " y: " + mysz.Y);
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)

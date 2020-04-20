@@ -53,6 +53,7 @@
         <RadioButton x:Name="POPButton" Content="POP" HorizontalAlignment="Left" Margin="22,246,0,0" VerticalAlignment="Top" GroupName="operations_group" FontFamily="Arial Black" Cursor="Hand" Checked="POPButton_Checked"/>
         <RadioButton x:Name="INTButton" Content="INT" HorizontalAlignment="Left" Margin="22,266,0,0" VerticalAlignment="Top" GroupName="operations_group" FontFamily="Arial Black" Cursor="Hand" Checked="POPButton_Checked"/>
         <TextBox x:Name="IntTextBox" HorizontalAlignment="Left" Height="50" Margin="511,24,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="159" FontFamily="Arial Black" Cursor="No" Focusable="False" BorderBrush="#FF8F8F8F" Background="White"/>
+        <Image x:Name="Bitmap" HorizontalAlignment="Left" Height="16" Margin="403,200,0,0" VerticalAlignment="Top" Width="16"/>
 
     </Grid>
 </Window>
