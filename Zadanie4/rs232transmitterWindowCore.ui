@@ -37,7 +37,7 @@
      </rect>
     </property>
     <property name="cursor" stdset="0">
-     <cursorShape>ForbiddenCursor</cursorShape>
+     <cursorShape>IBeamCursor</cursorShape>
     </property>
    </widget>
    <widget class="QTextBrowser" name="receivedTextDecoded">
@@ -50,7 +50,7 @@
      </rect>
     </property>
     <property name="cursor" stdset="0">
-     <cursorShape>ForbiddenCursor</cursorShape>
+     <cursorShape>IBeamCursor</cursorShape>
     </property>
    </widget>
    <widget class="QTextBrowser" name="reveivedTextCoded">
@@ -63,7 +63,7 @@
      </rect>
     </property>
     <property name="cursor" stdset="0">
-     <cursorShape>ForbiddenCursor</cursorShape>
+     <cursorShape>IBeamCursor</cursorShape>
     </property>
    </widget>
    <widget class="QPushButton" name="codeButton">

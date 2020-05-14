@@ -1,6 +1,7 @@
 from background import *
 import rs232transmitterWindowCore
 from rs232transmitterWindowCore import *
+import PySide2.QtGui
 
 
 class TransmitterWindow(QMainWindow):
@@ -12,6 +13,7 @@ class TransmitterWindow(QMainWindow):
         self.ui.codeButton.clicked.connect(self.codeclick)
         self.ui.sendButton.clicked.connect(self.sendclick)
         self.ui.decodeButton.clicked.connect(self.decodeclick)
+        self.ui.censoreBox.toggled.connect(self.checkboxcheck)
         self.coded_message = ''
         self.decoded_message = ''
         self.decoded_message_censored = ''
@@ -37,11 +39,19 @@ class TransmitterWindow(QMainWindow):
 
     def decodeclick(self):
         self.decoded_message = binary2string(self.coded_message)
+        self.decoded_message = binary2string(self.coded_message)
+        self.decoded_message_censored = censore_message(self.decoded_message, self.dictionary)
         if self.message_sent:
-            self.decoded_message_censored = self.decoded_message
-            for word in self.dictionary:
-                self.decoded_message_censored = self.decoded_message_censored.replace(word, "".rjust(len(word), '*'))
+            if self.ui.censoreBox.isChecked():
+                self.ui.receivedTextDecoded.setText(self.decoded_message_censored)
+            else:
+                self.ui.receivedTextDecoded.setText(self.decoded_message)
+
+    def checkboxcheck(self):
+        if self.ui.censoreBox.isChecked():
             self.ui.receivedTextDecoded.setText(self.decoded_message_censored)
+        else:
+            self.ui.receivedTextDecoded.setText(self.decoded_message)
 
     def keyPressEvent(self, event):
         if event.key() == Qt.Key_Escape:
