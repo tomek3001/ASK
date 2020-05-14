@@ -1,0 +1,1 @@
+Okno projektowane za pomocą Qt Designer 5.14.2 (zawarty w PySide2). Aby używać zaprojektowanego okna w naszej aplikacji należy zapisać projekt pod nazwą "rs232transmitterWindowCore.ui" w folderze projektu, a następnie uruchomić plik "zrobto.bat".
