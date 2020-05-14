@@ -1,0 +1,1 @@
+pyside2-uic rs232transmitterWindowCore.ui > rs232transmitterWindowCore.py
