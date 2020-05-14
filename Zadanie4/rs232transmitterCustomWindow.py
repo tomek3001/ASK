@@ -14,20 +14,34 @@ class TransmitterWindow(QMainWindow):
         self.ui.decodeButton.clicked.connect(self.decodeclick)
         self.coded_message = ''
         self.decoded_message = ''
+        self.decoded_message_censored = ''
         self.input_message = ''
+        self.message_sent = False
+
+        f = open('dicts/dict.txt', 'r')
+        self.dictionary = []
+        for line in f:
+            word = line.split('\n')[0]
+            self.dictionary.append(word)
 
     def codeclick(self):
         self.input_message = self.ui.inputTextPlain.toPlainText()
         binary_string = string2binary(self.input_message, False)
         self.coded_message = binary_string
         self.ui.inputTextCoded.setText(self.coded_message)
+        self.message_sent = False
 
     def sendclick(self):
         self.ui.reveivedTextCoded.setText(self.coded_message)
+        self.message_sent = True
 
     def decodeclick(self):
         self.decoded_message = binary2string(self.coded_message)
-        self.ui.receivedTextDecoded.setText(self.decoded_message)
+        if self.message_sent:
+            self.decoded_message_censored = self.decoded_message
+            for word in self.dictionary:
+                self.decoded_message_censored = self.decoded_message_censored.replace(word, "".rjust(len(word), '*'))
+            self.ui.receivedTextDecoded.setText(self.decoded_message_censored)
 
     def keyPressEvent(self, event):
         if event.key() == Qt.Key_Escape:
