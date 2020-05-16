@@ -9,12 +9,13 @@ def string2binary(string, separate_letters=True):
     if not separate_letters:
         connector = ''
     binary_string = connector.join(format(ord(letter), 'b').rjust(char_size, '0') for letter in string)
+    binary_string = binary_string[::-1]
     coded_binary_string = code_rs232(binary_string)
     return coded_binary_string
 
 
 def binary2string(string):
-    decoded_binary = decode_rs232(string)
+    decoded_binary = decode_rs232(string)[::-1]
     separated_letters = textwrap.wrap(decoded_binary, char_size)
     ascii_string = ''.join(chr(int(letter, 2)) for letter in separated_letters)
     return ascii_string
@@ -35,7 +36,8 @@ def decode_rs232(string):
 
 def censore_message(message, ldict):
     for word in ldict:
-        censor = re.compile(word, re.IGNORECASE)
+        censor = re.compile(word, re.ASCII)
+        print(censor)
         message = censor.sub(''.rjust(len(word), '*'), message)
     return message
 

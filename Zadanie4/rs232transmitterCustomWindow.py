@@ -2,6 +2,7 @@ from background import *
 import rs232transmitterWindowCore
 from rs232transmitterWindowCore import *
 import PySide2.QtGui
+import codecs
 
 
 class TransmitterWindow(QMainWindow):
@@ -20,10 +21,12 @@ class TransmitterWindow(QMainWindow):
         self.input_message = ''
         self.message_sent = False
 
-        f = open('dicts/dict.txt', 'r')
+        f = codecs.open('dicts/dict.txt', 'r', 'utf-8')
         self.dictionary = []
         for line in f:
-            word = line.split('\n')[0]
+            word = line.split('\n')[0].split("\r")[0]
+            print(word)
+
             self.dictionary.append(word)
 
     def codeclick(self):
@@ -34,7 +37,7 @@ class TransmitterWindow(QMainWindow):
         self.message_sent = False
 
     def sendclick(self):
-        self.ui.reveivedTextCoded.setText(self.coded_message)
+        self.ui.reveivedTextCoded.setText(self.coded_message[::-1])
         self.message_sent = True
 
     def decodeclick(self):
