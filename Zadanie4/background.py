@@ -35,11 +35,20 @@ def decode_rs232(string):
 
 
 def censore_message(message, ldict):
+    message_temp = message.split(" ")
     for word in ldict:
         censor = re.compile(word, re.ASCII)
-        print(censor)
-        message = censor.sub(''.rjust(len(word), '*'), message)
-    return message
+        message = censor.sub(''.rjust(len(word), '*'), message.lower())
+    result_message = ""
+    message = message.split(" ")
+    for word in range(len(message_temp)):
+        if "*" in message[word]:
+            result_message += message[word]
+        else:
+            result_message += message_temp[word]
+        result_message += " "
+
+    return result_message
 
 
 
