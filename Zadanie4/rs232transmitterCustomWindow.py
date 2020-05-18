@@ -27,6 +27,7 @@ class TransmitterWindow(QMainWindow):
             word = line.split('\n')[0].split("\r")[0]
             self.dictionary.append(word)
         self.dictionary.sort(key=lambda item: (-len(item), item))
+
     def codeclick(self):
         self.input_message = self.ui.inputTextPlain.toPlainText()
         binary_string = string2binary(self.input_message, False)
