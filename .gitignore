@@ -6,9 +6,14 @@ __pycache__/
 # C extensions
 *.so
 
+# Visual
+Zadanie_2/C#/.vs
+Zadanie_2/C#/bin
+Zadanie_2/C#/obj
+
+
 # Distribution / packaging
-.Python
-build/
+.Pythongit 
 develop-eggs/
 dist/
 downloads/
