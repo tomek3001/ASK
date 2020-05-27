@@ -2,8 +2,15 @@ from PySide2 import QtCore, QtGui, QtWidgets
 import sys
 from ctypes import Structure
 import time
+import keyboard
+
+from PySide2.QtWidgets import QGraphicsPixmapItem
 from numpy.random import randint as rand
 import threading
+from concurrent.futures import ThreadPoolExecutor
+
+import resources
+
 # Class containing all displayed subtitles
 class TEXT(Structure):
 
@@ -19,8 +26,16 @@ class TEXT(Structure):
 
     click_me = "Click me!"
 
+    your_score = "Your score in this test is: "
+
+    next = "Press to continue"
+
+    end = "Thanks you for participation"
+
+
 class PARAMS(Structure):
-    test_1_duration = 10    # time in secs
+    test_1_duration = 1    # time in secs
+    interval = 50000
 
 
 class MainWindow(QtWidgets.QMainWindow):
@@ -32,14 +47,15 @@ class MainWindow(QtWidgets.QMainWindow):
         self.tabWidget = QtWidgets.QTabWidget(self.centralwidget)
         self.tabWidget.setGeometry(QtCore.QRect(0, 0, 921, 771))
         self.tab = QtWidgets.QWidget()
-        self.graphicsView = QtWidgets.QGraphicsView(self.tab)
-        self.graphicsView.setGeometry(QtCore.QRect(0, 0, 920, 750))
-        self.pushButton = QtWidgets.QPushButton(self.tab)
-        self.pushButton.setGeometry(QtCore.QRect(360, 350, 200, 51))
+        self.graphicsScene = QtWidgets.QGraphicsScene(self.tab)
+        self.graphicsView = QtWidgets.QGraphicsView(self.graphicsScene, self)
+        self.graphicsView.setGeometry(0, 300, self.width(), self.height())
+        self.startButton = QtWidgets.QPushButton(self.tab)
+        self.startButton.setGeometry(QtCore.QRect(360, 350, 200, 51))
         font = QtGui.QFont()
         font.setPointSize(15)
-        self.pushButton.setFont(font)
-        self.pushButton.setText(TEXT.start_button)
+        self.startButton.setFont(font)
+        self.startButton.setText(TEXT.start_button)
         self.label = QtWidgets.QLabel(self.tab)
         self.label.setText(TEXT.Invitation)
         self.label.setGeometry(QtCore.QRect(160, 0, 600, 160))
@@ -60,7 +76,16 @@ class MainWindow(QtWidgets.QMainWindow):
         self.setStatusBar(self.statusbar)
         self.tabWidget.setTabEnabled(1, False)
         self.tabWidget.setCurrentIndex(0)
+        # Continue button
+        self.continueButton = QtWidgets.QPushButton(self.tab)
+        self.continueButton.setGeometry(QtCore.QRect(360, 350, 200, 51))
+        font = QtGui.QFont()
+        font.setPointSize(15)
+        self.continueButton.setFont(font)
+        self.continueButton.setText(TEXT.next)
+        self.continueButton.setVisible(False)
 
+        # First task button - reflex
         self.firstTaskButton = QtWidgets.QPushButton(self.tab)
         self.firstTaskButton.setGeometry(QtCore.QRect(360, 350, 200, 51))
         font = QtGui.QFont()
@@ -69,33 +94,82 @@ class MainWindow(QtWidgets.QMainWindow):
         self.firstTaskButton.setText(TEXT.click_me)
         self.firstTaskButton.setVisible(False)
         self.pointCounter = 0
+        self.testNumber = 0
+        self.globalCursorPos = (-1, -1)
 
-        self.pushButton.clicked.connect(self.startTest)
+
+        # Second task button
+        self.secondTaskButton = QtWidgets.QPushButton(self.tab)
+        self.secondTaskButton.setGeometry(QtCore.QRect(360, 350, 200, 51))
+        font = QtGui.QFont()
+        font.setPointSize(15)
+        self.secondTaskButton.setFont(font)
+        self.secondTaskButton.setText(TEXT.click_me)
+        self.secondTaskButton.setVisible(False)
+
+        self.graphicsView.setVisible(False)
+        self.startButton.clicked.connect(self.startTest)
         self.firstTaskButton.clicked.connect(self.addPoint)
+        self.continueButton.clicked.connect(self.tasksCounter)
+
+    def mousePressEvent(self, event):
+        self.globalCursorPos = (event.pos().x(), event.pos().y())
+        time.sleep(0.5)
+        self.globalCursorPos = (-1, -1)
 
     def startTest(self):
         start = time.time()
         x, y = self.newPosition()
         self.pointCounter = 0
-        self.pushButton.setVisible(False)
+        self.startButton.setVisible(False)
         self.label.setText(TEXT.first_task)
         self.firstTaskButton.setVisible(True)
         self.firstTaskButton.setGeometry(x, y, 200, 51)
-        self.thread = threading.Thread(target=self.wait, args=(start, ))
+        self.thread = threading.Thread(target=self.wait, args=(start, PARAMS.test_1_duration, ))
         self.thread.start()
 
-    def wait(self, start):
-        while time.time() - start < PARAMS.test_1_duration:
+    def tasksCounter(self):
+        self.testNumber += 1
+        self.continueButton.setVisible(False)
+        if self.testNumber == 1:
+            self.graphicsView.setVisible(True)
+        if self.testNumber == 2:                 # TO TRZEBA ZMIENIĆ NIE KOŃCZYMY PO DWÓCH ZADANIACH
+            self.endProgram()
+
+    def keyPressEvent(self, event):
+        key = event.key()
+        if key == 32:
+            pass
+
+
+
+    def endProgram(self):
+        self.label.setText(TEXT.end)
+        self.update()
+        self.close()
+
+    # First test
+    def wait(self, start, stop):
+        while time.time() - start < stop:
             pass
         self.firstTaskButton.setVisible(False)
-        print("Your points: ", self.pointCounter)
+        self.label.setText(TEXT.your_score + str(self.pointCounter))
+        self.continueButton.setVisible(True)
+
     def addPoint(self):
         self.pointCounter += 1
         x, y = self.newPosition()
         self.firstTaskButton.setGeometry(x, y, 200, 51)
 
     def newPosition(self):
-        return rand(0, self.width() - 200), rand(0, self.height()-51)
+        return rand(0, self.width() - 200), rand(0, self.height() - 102)
+
+    # Second test
+
+
+
+
+
 
 if __name__ == '__main__':
     myApp = QtWidgets.QApplication(sys.argv)
