@@ -62,13 +62,14 @@ class MainWindow(QtWidgets.QMainWindow):
         self.graphicsView = QtWidgets.QGraphicsView(self.graphicsScene, self)
         self.graphicsView.setGeometry(0, 300, self.width(), self.height())
         self.items = []
-        for item in range(1):
+        for item in range(10):
             self.items.append(QtWidgets.QGraphicsPixmapItem())
-            self.items[-1].setPixmap(QtGui.QPixmap(":/hex.png")) #TEXT.shapes[rand(0,4)]))
-            self.items[-1].setPos(50 , 50) #rand(0, self.graphicsView.width()), rand(0, self.graphicsView.height()))
-            self.items[-1].setScale(0.2)
-            #self.items[-1].setRotation(random())
+            self.items[-1].setPixmap(QtGui.QPixmap(TEXT.shapes[rand(0, 4)]))
+            self.items[-1].setPos(rand(0, self.graphicsView.width()), rand(0, self.graphicsView.height()))
+            self.items[-1].setScale(0.1)
+            self.items[-1].setRotation(random())
             self.items[-1].setVisible(True)
+            self.graphicsScene.addItem(self.items[-1])
 
         self.startButton = QtWidgets.QPushButton(self.tab)
         self.startButton.setGeometry(QtCore.QRect(360, 350, 200, 51))
@@ -94,6 +95,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.setCentralWidget(self.centralwidget)
         self.tabWidget.setTabEnabled(1, False)
         self.tabWidget.setCurrentIndex(0)
+
         # Continue button
         self.continueButton = QtWidgets.QPushButton(self.tab)
         self.continueButton.setGeometry(QtCore.QRect(360, 350, 200, 51))
