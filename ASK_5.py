@@ -8,6 +8,7 @@ from random import random
 import threading
 import pygame
 import resources
+import timeit
 
 # Class containing all displayed subtitles
 class TEXT(Structure):
@@ -177,13 +178,14 @@ class MainWindow(QtWidgets.QMainWindow):
         self.continueButton.setVisible(False)
         for i in range(1):
             time.sleep(rand(2, 6))
-            start = time.time()
             pygame.mixer.init()
             pygame.mixer_music.load(TEXT.file_name)
             pygame.mixer_music.play()
+            start = timeit.default_timer()              # zamieniłem kolejność, bo tak to czas reakcji był liczony
+                                                        # razem z czasem wczytania pliku
             while self.stop - start < 0:
                 pass
-            self.reaction_time += time.time() - start       # [BŁĄD] COŚ TU Z SUMĄ NIE GRA
+            self.reaction_time = timeit.default_timer() - start       # [BŁĄD] COŚ TU Z SUMĄ NIE GRA
         self.continueButton.setVisible(True)
         self.label.setText(TEXT.your_score + str(self.reaction_time) + " s")
         self.continueButton.setVisible(True)
