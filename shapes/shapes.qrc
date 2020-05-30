@@ -1,0 +1,8 @@
+<!DOCTYPE RCC><RCC version="1.0">
+  <qresource>
+     <file>hex.png</file>
+     <file>circle.png</file>
+	 <file>oktagon.png</file>
+	 <file>square.png</file>	
+  </qresource>
+</RCC>
