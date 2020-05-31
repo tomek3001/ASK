@@ -291,18 +291,19 @@ class MainWindow(QtWidgets.QMainWindow):
                     pass
                 self.reaction_time = time.time() - start
                 self.label.setText(TEXT.your_score + str(self.reaction_time) + " s")
-        for i in range(1):
-            time.sleep(rand(2, 6))
-            pygame.mixer.init()
-            pygame.mixer_music.load(TEXT.file_name)
-            pygame.mixer_music.play()
-            start = time.time()  # zamieniłem kolejność, bo tak to czas reakcji był liczony
-            # razem z czasem wczytania pliku
-            while self.stop - start < 0:
-                pass
-            self.reaction_time = time.time() - start
-        self.label.setText(TEXT.your_score + str(self.reaction_time) + " s")
-        self.continueButton.setVisible(True)
+        else:
+            for i in range(1):
+                time.sleep(rand(2, 6))
+                pygame.mixer.init()
+                pygame.mixer_music.load(TEXT.file_name)
+                pygame.mixer_music.play()
+                start = time.time()  # zamieniłem kolejność, bo tak to czas reakcji był liczony
+                # razem z czasem wczytania pliku
+                while self.stop - start < 0:
+                    pass
+                self.reaction_time = time.time() - start
+            self.label.setText(TEXT.your_score + str(self.reaction_time) + " s")
+            self.continueButton.setVisible(True)
 
     def mousePressEvent(self, event):
         self.mouse_press_pos = event.pos().toTuple()
