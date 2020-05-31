@@ -56,6 +56,8 @@ class TEXT(Structure):
     square = ":/square"
     octagon = ":/octagon"
 
+    title = "Psychomotor test"
+
     shapes = [hexagon, circle, square, octagon]
 
 
@@ -77,6 +79,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.graphicsView = QtWidgets.QGraphicsView(self.graphicsScene, self)
         self.graphicsView.setGeometry(0, 300, self.width(), self.height() - 300)
         self.createSquares()
+        self.setWindowTitle(TEXT.title)
         # Start Button
         self.startButton = QtWidgets.QPushButton(self.tab)
         self.startButton.setGeometry(QtCore.QRect(360, 350, 200, 51))
@@ -104,8 +107,6 @@ class MainWindow(QtWidgets.QMainWindow):
         self.label.setAlignment(QtCore.Qt.AlignCenter)
         self.label.setWordWrap(True)
         self.tabWidget.addTab(self.tab, TEXT.tab_1)
-        self.tab_2 = QtWidgets.QWidget()
-        self.tabWidget.addTab(self.tab_2, TEXT.tab_2)
         self.setCentralWidget(self.centralwidget)
         self.tabWidget.setTabEnabled(1, False)
         self.tabWidget.setCurrentIndex(0)
