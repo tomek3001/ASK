@@ -285,7 +285,6 @@ class MainWindow(QtWidgets.QMainWindow):
         while forbidden:
             new_x = rand(0, self.width() - 200)
             new_y = rand(0, self.height() - 102)
-            print(new_x, new_y)
             if not ((forbidden_x_min < new_x < forbidden_x_max) and
                     (forbidden_y_min < new_y < forbidden_y_max)):
                 forbidden = False
@@ -305,7 +304,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 while self.stop - start < 0:
                     pass
                 self.reaction_time = time.time() - start
-                self.label.setText(TEXT.your_score + str(self.reaction_time) + " s")
+                self.label.setText(TEXT.your_score + str(time.time() - start) + " s")
         else:
             for i in range(1):
                 time.sleep(rand(2, 6))
