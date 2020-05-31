@@ -277,7 +277,19 @@ class MainWindow(QtWidgets.QMainWindow):
         self.firstTaskButton.setGeometry(x, y, 200, 51)
 
     def newPosition(self):
-        return rand(0, self.width() - 200), rand(0, self.height() - 102)
+        forbidden_x_min = 108
+        forbidden_x_max = 629
+        forbidden_y_min = 19
+        forbidden_y_max = 96
+        forbidden = True
+        while forbidden:
+            new_x = rand(0, self.width() - 200)
+            new_y = rand(0, self.height() - 102)
+            print(new_x, new_y)
+            if not ((forbidden_x_min < new_x < forbidden_x_max) and
+                    (forbidden_y_min < new_y < forbidden_y_max)):
+                forbidden = False
+        return new_x, new_y
 
     # Second test
     def makeSound(self):
