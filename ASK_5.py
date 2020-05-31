@@ -49,12 +49,14 @@ class TEXT(Structure):
 
     file_name = resource_path('music\\smashing.wav')
 
-    exercise_tool = "\nPress C to continue"
+    exercise_tool = "\nPress C to go to next exercise"
 
     hexagon = ":/hexagon"
     circle = ":/circle"
     square = ":/square"
     octagon = ":/octagon"
+
+    title = "Psychomotor test"
 
     shapes = [hexagon, circle, square, octagon]
 
@@ -77,6 +79,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.graphicsView = QtWidgets.QGraphicsView(self.graphicsScene, self)
         self.graphicsView.setGeometry(0, 300, self.width(), self.height() - 300)
         self.createSquares()
+        self.setWindowTitle(TEXT.title)
         # Start Button
         self.startButton = QtWidgets.QPushButton(self.tab)
         self.startButton.setGeometry(QtCore.QRect(360, 350, 200, 51))
@@ -104,8 +107,6 @@ class MainWindow(QtWidgets.QMainWindow):
         self.label.setAlignment(QtCore.Qt.AlignCenter)
         self.label.setWordWrap(True)
         self.tabWidget.addTab(self.tab, TEXT.tab_1)
-        self.tab_2 = QtWidgets.QWidget()
-        self.tabWidget.addTab(self.tab_2, TEXT.tab_2)
         self.setCentralWidget(self.centralwidget)
         self.tabWidget.setTabEnabled(1, False)
         self.tabWidget.setCurrentIndex(0)
@@ -288,7 +289,7 @@ class MainWindow(QtWidgets.QMainWindow):
     def wait(self, start, stop):
         if self.exercises:
             while not self.continueButton.isVisible():
-                self.label.setText(TEXT.your_score + str(self.pointCounter))
+                self.label.setText(TEXT.your_score + str(self.pointCounter) + TEXT.exercise_tool)
         else:
             while time.time() - start < stop:
                 pass
@@ -331,7 +332,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 while self.stop - start < 0:
                     pass
                 self.reaction_time = time.time() - start
-                self.label.setText(TEXT.your_score + str(round(time.time() - start, 3)) + " s")
+                self.label.setText(TEXT.your_score + str(round(time.time() - start, 3)) + " s" + TEXT.exercise_tool)
         else:
             for i in range(1):
                 time.sleep(rand(2, 6))
@@ -367,7 +368,8 @@ class MainWindow(QtWidgets.QMainWindow):
                             figure.setVisible(False)
                             self.update()
             if self.marked_squares == self.all_squares:
-                self.label.setText(TEXT.your_score_3 + str(round((time.time() - self.start) / self.marked_squares, 3)) + " s")
+                self.label.setText(TEXT.your_score_3 + str(round((time.time() - self.start) / self.marked_squares, 3))
+                                   + " s" + TEXT.exercise_tool)
                 self.start = time.time()
                 self.graphicsScene.clear()
                 self.createSquares()
