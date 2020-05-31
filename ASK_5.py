@@ -284,7 +284,8 @@ class MainWindow(QtWidgets.QMainWindow):
                 time.sleep(rand(2, 6))
                 pygame.mixer.init()
                 pygame.mixer_music.load(TEXT.file_name)
-                pygame.mixer_music.play()
+                if not self.continueButton.isVisible():
+                    pygame.mixer_music.play()
                 start = time.time()  # zamieniłem kolejność, bo tak to czas reakcji był liczony
                 # razem z czasem wczytania pliku
                 while self.stop - start < 0:
