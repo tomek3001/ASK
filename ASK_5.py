@@ -213,15 +213,18 @@ class MainWindow(QtWidgets.QMainWindow):
         self.testNumber += 1
         self.continueButton.setVisible(False)
         if self.testNumber == 1:
+            self.continueButton.setVisible(True)
             self.label.setText(TEXT.second_task)
+        if self.testNumber == 2:
             self.thread = threading.Thread(target=self.makeSound)
             self.thread.start()
-
-        if self.testNumber == 2:
+        if self.testNumber == 3:
             self.label.setText(TEXT.third_task)
+            self.continueButton.setVisible(True)
+        if self.testNumber == 4:
             self.graphicsView.setVisible(True)
             self.start = time.time()
-        if self.testNumber == 3:
+        if self.testNumber == 5:
             if self.exercises:
                 self.reset()
             else:
@@ -247,7 +250,7 @@ class MainWindow(QtWidgets.QMainWindow):
         key = event.key()
         if key == 32:
             self.stop = time.time()
-        if key == 67:
+        if key == 67 and self.exercises:
             self.continueButton.setVisible(True)
             self.graphicsView.setVisible(False)
 
@@ -278,7 +281,6 @@ class MainWindow(QtWidgets.QMainWindow):
 
     # Second test
     def makeSound(self):
-        self.continueButton.setVisible(False)
         if self.exercises:
             while not self.continueButton.isVisible():
                 time.sleep(rand(2, 6))
@@ -308,7 +310,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def mousePressEvent(self, event):
         self.mouse_press_pos = event.pos().toTuple()
-        if self.testNumber == 2:
+        if self.testNumber == 4:
             self.check_pressed_figure()
 
     def check_pressed_figure(self):
@@ -333,7 +335,6 @@ class MainWindow(QtWidgets.QMainWindow):
                 self.graphicsScene.clear()
                 self.createSquares()
         else:
-            self.clear_console()
             hit = False
             for figure in self.items:
                 tested_figure = figure.boundingRect().getRect()
