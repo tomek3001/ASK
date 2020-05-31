@@ -4,15 +4,17 @@ from ctypes import Structure
 import time
 import keyboard
 from numpy.random import randint as rand
+import numpy as np
 from random import random
 import threading
 import pygame
-import resources
+import shapes.resources
 import timeit
+import os
+
 
 # Class containing all displayed subtitles
 class TEXT(Structure):
-
     Invitation = "Hello, we are grateful that you wanted to take part in our psychomotor test." \
                  " There are 4 tasks ahead of you that will allow us to test your skills. Good luck!" \
                  "\nFirst you have to click button as fast as possible"
@@ -25,7 +27,7 @@ class TEXT(Structure):
     first_task = "Press buttons as fast as possible"
     second_task = "Your next task is to capture the sound as fast as possible wait for sound three times." \
                   "Press space if you heard sound"
-    third_task = "Your third task is to  check all  squares."
+    third_task = "Your third task is to check all the squares."
     click_me = "Click me!"
 
     your_score = "Your score in this test is: "
@@ -36,16 +38,16 @@ class TEXT(Structure):
 
     file_name = "smashing.wav"
 
-    hex = ":/hex.png"
-    circle = ":/circle.png"
-    square = ":/square.png"
-    oktagon = ":/oktagon.png"
+    hexagon = ":/hexagon"
+    circle = ":/circle"
+    square = ":/square"
+    octagon = ":/octagon"
 
-    shapes = [hex, circle, square, oktagon]
+    shapes = [hexagon, circle, square, octagon]
 
 
 class PARAMS(Structure):
-    test_1_duration = 2    # time in secs
+    test_1_duration = 2  # time in secs
     interval = 50000
 
 
@@ -60,16 +62,68 @@ class MainWindow(QtWidgets.QMainWindow):
         self.tab = QtWidgets.QWidget()
         self.graphicsScene = QtWidgets.QGraphicsScene(self.tab)
         self.graphicsView = QtWidgets.QGraphicsView(self.graphicsScene, self)
-        self.graphicsView.setGeometry(0, 300, self.width(), self.height())
+        self.graphicsView.setGeometry(0, 300, self.width(), self.height() - 300)
+        graphics_view_dimensions = self.width() - 2, self.height() - 302
+        self.graphicsView.setSceneRect(0, 0, graphics_view_dimensions[0], graphics_view_dimensions[1])
+        # self.graphicsView.set
+
         self.items = []
+        self.all_squares = 0
+        self.marked_squares = 0
         for item in range(10):
             self.items.append(QtWidgets.QGraphicsPixmapItem())
-            self.items[-1].setPixmap(QtGui.QPixmap(TEXT.shapes[rand(0, 4)]))
-            self.items[-1].setPos(rand(0, self.graphicsView.width()), rand(0, self.graphicsView.height()))
-            self.items[-1].setScale(0.1)
-            self.items[-1].setRotation(random())
+            # self.items[-1].setRotation(rand(0, 45))
+            if item == 0:
+                chosen_fig = TEXT.shapes[2]
+                self.items[-1].shape_name = chosen_fig[2:]
+                pixmap = QtGui.QPixmap(chosen_fig)
+            else:
+                chosen_fig = TEXT.shapes[rand(0, 4)]
+                self.items[-1].shape_name = chosen_fig[2:]
+                pixmap = QtGui.QPixmap(chosen_fig)
+            if self.items[-1].shape_name == "square":
+                self.all_squares += 1
+            pixmap = pixmap.scaledToHeight(int(pixmap.height() / 15), QtCore.Qt.SmoothTransformation)
+            self.items[-1].setPixmap(pixmap)
+            self.items[-1].checked = False
+            overlays = True
+            while overlays:
+                current_figure = self.items[-1].boundingRect().getRect()
+                # set new position, from 10 to gw dimension minus figure dim (width/height)
+                self.items[-1].setPos(rand(10, graphics_view_dimensions[0] - current_figure[2]),
+                                      rand(10, graphics_view_dimensions[1] - current_figure[3]))
+                self.items[-1].pos()
+                current_figure_x = self.items[-1].pos().x()
+                current_figure_y = self.items[-1].pos().y()
+                current_figure_bbox = QtCore.QRectF(current_figure_x - int(current_figure_x / 2),
+                                                    current_figure_y - int(current_figure_y / 2),
+                                                    current_figure[2],
+                                                    current_figure[3])
+                print(current_figure)
+                print(self.items[-1].pos())
+                print(current_figure_bbox)
+                if len(self.items) > 1:
+                    for figure in self.items[:-1]:
+                        tested_figure = figure.boundingRect().getRect()
+                        tested_figure_x = figure.pos().x()
+                        tested_figure_y = figure.pos().y()
+                        tested_figure_bbox = QtCore.QRectF(tested_figure_x - int(tested_figure_x / 2),
+                                                           tested_figure_y - int(tested_figure_y / 2),
+                                                           tested_figure[2],
+                                                           tested_figure[3])
+                        if current_figure_bbox.intersects(tested_figure_bbox):
+                            overlays = True
+                            break
+                        else:
+                            overlays = False
+                else:
+                    break
+
             self.items[-1].setVisible(True)
             self.graphicsScene.addItem(self.items[-1])
+
+        for item in self.items:
+            print(item)
 
         self.startButton = QtWidgets.QPushButton(self.tab)
         self.startButton.setGeometry(QtCore.QRect(360, 350, 200, 51))
@@ -123,6 +177,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.startButton.clicked.connect(self.startTest)
         self.firstTaskButton.clicked.connect(self.addPoint)
         self.continueButton.clicked.connect(self.tasksCounter)
+        self.mouse_press_pos = 0
 
     def startTest(self):
         start = time.time()
@@ -132,7 +187,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.label.setText(TEXT.first_task)
         self.firstTaskButton.setVisible(True)
         self.firstTaskButton.setGeometry(x, y, 200, 51)
-        self.thread = threading.Thread(target=self.wait, args=(start, PARAMS.test_1_duration, ))
+        self.thread = threading.Thread(target=self.wait, args=(start, PARAMS.test_1_duration,))
         self.thread.start()
 
     def tasksCounter(self):
@@ -143,7 +198,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self.thread = threading.Thread(target=self.makeSound)
             self.thread.start()
 
-        if self.testNumber == 2:                 # TO TRZEBA ZMIENIĆ NIE KOŃCZYMY PO DWÓCH ZADANIACH
+        if self.testNumber == 2:  # TO TRZEBA ZMIENIĆ NIE KOŃCZYMY PO DWÓCH ZADANIACH
             self.label.setText(TEXT.third_task)
             self.graphicsView.setVisible(True)
         if self.testNumber == 3:
@@ -183,14 +238,50 @@ class MainWindow(QtWidgets.QMainWindow):
             pygame.mixer.init()
             pygame.mixer_music.load(TEXT.file_name)
             pygame.mixer_music.play()
-            start = timeit.default_timer()              # zamieniłem kolejność, bo tak to czas reakcji był liczony
-                                                        # razem z czasem wczytania pliku
+            start = time.time()  # zamieniłem kolejność, bo tak to czas reakcji był liczony
+            # razem z czasem wczytania pliku
             while self.stop - start < 0:
                 pass
-            self.reaction_time = timeit.default_timer() - start       # [BŁĄD] COŚ TU Z SUMĄ NIE GRA
+            self.reaction_time = time.time() - start  # [BŁĄD] COŚ TU Z SUMĄ NIE GRA
         self.continueButton.setVisible(True)
         self.label.setText(TEXT.your_score + str(self.reaction_time) + " s")
         self.continueButton.setVisible(True)
+
+    def mousePressEvent(self, event):
+        self.mouse_press_pos = event.pos().toTuple()
+        print(self.mouse_press_pos)
+        if True:
+            self.check_pressed_figure()
+
+    def check_pressed_figure(self):
+        self.clear_console()
+        hit = False
+        for figure in self.items:
+            tested_figure = figure.boundingRect().getRect()
+            tested_figure_x = figure.pos().x()
+            tested_figure_y = figure.pos().y()
+            tested_figure_xend = tested_figure_x + tested_figure[2]
+            tested_figure_yend = tested_figure_y + tested_figure[3]
+            if ((tested_figure_x < self.mouse_press_pos[0] < tested_figure_xend) and
+                    (tested_figure_y < self.mouse_press_pos[1] - 300 < tested_figure_yend)):
+                if figure.shape_name == "square":
+                    if figure.checked is False:
+                        print(f"ALE ŻEŚ PIERDOLNĄŁ TEGO {figure.shape_name.upper()}A!!!\n")
+                        figure.checked = True
+                        self.marked_squares += 1
+                    else:
+                        print(f"NO TEGO {figure.shape_name.upper()}A TO JUŻ KLIKAŁEŚ...")
+                else:
+                    print("CO TY WOGULE KLIKASZ :/\n")
+                hit = True
+
+        if not hit:
+            print("No nie trafiłeś no cholibka")
+
+        print(f"\nZaznaczyłeś {self.marked_squares}/{self.all_squares} kwadratów.")
+
+    def clear_console(self):
+        os.system('cls' if os.name == 'nt' else 'clear')
 
 
 if __name__ == '__main__':

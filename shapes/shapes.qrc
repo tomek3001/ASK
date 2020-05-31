@@ -1,8 +1,8 @@
 <!DOCTYPE RCC><RCC version="1.0">
   <qresource>
-     <file>hex.png</file>
-     <file>circle.png</file>
-	 <file>oktagon.png</file>
-	 <file>square.png</file>	
+     <file alias="hexagon">hexagon.png</file>
+     <file alias="circle">circle.png</file>
+	 <file alias="octagon">octagon.png</file>
+	 <file alias="square">square.png</file>	
   </qresource>
 </RCC>
