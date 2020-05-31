@@ -49,7 +49,7 @@ class TEXT(Structure):
 
     file_name = resource_path('music\\smashing.wav')
 
-    exercise_tool = "\nPress C to continue"
+    exercise_tool = "\nPress C to go to next exercise"
 
     hexagon = ":/hexagon"
     circle = ":/circle"
@@ -288,7 +288,7 @@ class MainWindow(QtWidgets.QMainWindow):
     def wait(self, start, stop):
         if self.exercises:
             while not self.continueButton.isVisible():
-                self.label.setText(TEXT.your_score + str(self.pointCounter))
+                self.label.setText(TEXT.your_score + str(self.pointCounter) + TEXT.exercise_tool)
         else:
             while time.time() - start < stop:
                 pass
@@ -331,7 +331,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 while self.stop - start < 0:
                     pass
                 self.reaction_time = time.time() - start
-                self.label.setText(TEXT.your_score + str(round(time.time() - start, 3)) + " s")
+                self.label.setText(TEXT.your_score + str(round(time.time() - start, 3)) + " s" + TEXT.exercise_tool)
         else:
             for i in range(1):
                 time.sleep(rand(2, 6))
@@ -367,7 +367,8 @@ class MainWindow(QtWidgets.QMainWindow):
                             figure.setVisible(False)
                             self.update()
             if self.marked_squares == self.all_squares:
-                self.label.setText(TEXT.your_score_3 + str(round((time.time() - self.start) / self.marked_squares, 3)) + " s")
+                self.label.setText(TEXT.your_score_3 + str(round((time.time() - self.start) / self.marked_squares, 3))
+                                   + " s" + TEXT.exercise_tool)
                 self.start = time.time()
                 self.graphicsScene.clear()
                 self.createSquares()
