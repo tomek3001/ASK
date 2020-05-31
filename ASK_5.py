@@ -9,6 +9,16 @@ import threading
 import pygame
 import shapes.resources
 import matplotlib.pyplot as plt
+import os
+
+
+def resource_path(relative_path):
+    try:
+        # PyInstaller creates a temp folder and stores path in _MEIPASS
+        base_path = sys._MEIPASS
+    except Exception:
+        base_path = os.path.abspath(".")
+    return os.path.join(base_path, relative_path)
 
 
 # Class containing all displayed subtitles
@@ -37,7 +47,7 @@ class TEXT(Structure):
 
     end = "Thank you for participation"
 
-    file_name = "smashing.wav"
+    file_name = resource_path('music\\smashing.wav')
 
     exercise_tool = "\nPress C to continue"
 
