@@ -2,46 +2,44 @@ from PySide2 import QtCore, QtGui, QtWidgets
 import sys
 from ctypes import Structure
 import time
-import keyboard
 from numpy.random import randint as rand
 import numpy as np
 from random import random
 import threading
 import pygame
 import shapes.resources
-import timeit
-import os
+import matplotlib.pyplot as plt
 
 
 # Class containing all displayed subtitles
 class TEXT(Structure):
     Invitation = "Hello, we are grateful that you wanted to take part in our psychomotor test." \
-                 " There are 4 tasks ahead of you that will allow us to test your skills. Good luck!" \
-                 "\nFirst you have to click button as fast as possible"
+                 " There are 3 tasks ahead of you that will allow us to test your skills. Good luck!" \
+                 "\nFirstly you have to click button as fast as possible."
     window_title = "Psychomotor tests"
     start_button = "Press to start"
 
-    test_button = "Let's some exercises"
+    test_button = "Let's practice"
 
     tab_1 = "Test"
     tab_2 = "Results"
 
-    first_task = "Press buttons as fast as possible"
-    second_task = "Your next task is to capture the sound as fast as possible wait for sound three times." \
-                  "Press space if you heard sound"
-    third_task = "Your third task is to check all the squares."
+    first_task = "Press button as quiclky as possible"
+    second_task = "Your next task is to capture the sound as fast as possible." \
+                  "\nPress space when you hear gun shoot."
+    third_task = "Your third task is to click all the squares."
     click_me = "Click me!"
 
     your_score = "Your score in this test is: "
+    your_score_3 = "Your score (time per square) in this test is: "
 
     next = "Press to continue"
 
-    end = "Thanks you for participation"
+    end = "Thank you for participation"
 
     file_name = "smashing.wav"
 
     exercise_tool = "\nPress C to continue"
-
 
     hexagon = ":/hexagon"
     circle = ":/circle"
@@ -52,7 +50,7 @@ class TEXT(Structure):
 
 
 class PARAMS(Structure):
-    test_1_duration = 2  # time in secs
+    test_1_duration = 10  # time in secs
     interval = 50000
 
 
@@ -85,7 +83,7 @@ class MainWindow(QtWidgets.QMainWindow):
         #Labels
         self.label = QtWidgets.QLabel(self.tab)
         self.label.setText(TEXT.Invitation)
-        self.label.setGeometry(QtCore.QRect(160, 0, 600, 160))
+        self.label.setGeometry(QtCore.QRect(110, 0, 700, 160))
         font = QtGui.QFont()
         font.setPointSize(20)
         font.setStrikeOut(False)
@@ -132,6 +130,11 @@ class MainWindow(QtWidgets.QMainWindow):
         self.firstTaskButton.clicked.connect(self.addPoint)
         self.continueButton.clicked.connect(self.tasksCounter)
         self.testButton.clicked.connect(self.exercisesTool)
+
+        #scores
+        self.task_1_times = []
+        self.task_2_time = 0
+        self.tast_3_time = 0
 
     def createSquares(self):
         graphics_view_dimensions = self.width() - 2, self.height() - 302
@@ -206,6 +209,8 @@ class MainWindow(QtWidgets.QMainWindow):
             self.label.setText(TEXT.first_task)
         self.firstTaskButton.setVisible(True)
         self.firstTaskButton.setGeometry(x, y, 200, 51)
+        if not self.exercises:
+            self.task_1_times.append(time.time())
         self.thread = threading.Thread(target=self.wait, args=(start, PARAMS.test_1_duration,))
         self.thread.start()
 
@@ -257,6 +262,16 @@ class MainWindow(QtWidgets.QMainWindow):
     def endProgram(self):
         self.label.setText(TEXT.end)
         self.update()
+        task_1_scores = self.task_1_times[:-1]
+        average_value = sum(task_1_scores)/len(task_1_scores)
+        x_values = [i + 1 for i in range(len(task_1_scores))]
+        plt.bar(x_values, task_1_scores)
+        plt.hlines(average_value, 0.5, x_values[-1] + 0.5, colors='r', label=f'Average time - {round(average_value, 2)} ms')
+        plt.title("First task reaction times")
+        plt.xlabel("Attempt")
+        plt.ylabel("Reaction time (ms)")
+        plt.legend()
+        plt.show()
         self.close()
 
     # First test
@@ -275,10 +290,13 @@ class MainWindow(QtWidgets.QMainWindow):
         self.pointCounter += 1
         x, y = self.newPosition()
         self.firstTaskButton.setGeometry(x, y, 200, 51)
+        if not self.exercises:
+            self.task_1_times[-1] = time.time() - self.task_1_times[-1]
+            self.task_1_times.append(time.time())
 
     def newPosition(self):
-        forbidden_x_min = 108
-        forbidden_x_max = 629
+        forbidden_x_min = 83
+        forbidden_x_max = 660
         forbidden_y_min = 19
         forbidden_y_max = 96
         forbidden = True
@@ -295,28 +313,26 @@ class MainWindow(QtWidgets.QMainWindow):
         if self.exercises:
             while not self.continueButton.isVisible():
                 time.sleep(rand(2, 6))
-                pygame.mixer.init()
+                pygame.mixer.init(44100, -16, 1, 512)
                 pygame.mixer_music.load(TEXT.file_name)
                 if not self.continueButton.isVisible():
                     pygame.mixer_music.play()
-                start = time.time()  # zamieniłem kolejność, bo tak to czas reakcji był liczony
-                # razem z czasem wczytania pliku
+                start = time.time()
                 while self.stop - start < 0:
                     pass
                 self.reaction_time = time.time() - start
-                self.label.setText(TEXT.your_score + str(time.time() - start) + " s")
+                self.label.setText(TEXT.your_score + str(round(time.time() - start, 3)) + " s")
         else:
             for i in range(1):
                 time.sleep(rand(2, 6))
-                pygame.mixer.init()
+                pygame.mixer.init(44100, -16, 1, 512)
                 pygame.mixer_music.load(TEXT.file_name)
                 pygame.mixer_music.play()
-                start = time.time()  # zamieniłem kolejność, bo tak to czas reakcji był liczony
-                # razem z czasem wczytania pliku
+                start = time.time()
                 while self.stop - start < 0:
                     pass
                 self.reaction_time = time.time() - start
-            self.label.setText(TEXT.your_score + str(self.reaction_time) + " s")
+            self.label.setText(TEXT.your_score + str(round(self.reaction_time, 3)) + " s")
             self.continueButton.setVisible(True)
 
     def mousePressEvent(self, event):
@@ -326,7 +342,6 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def check_pressed_figure(self):
         if self.exercises:
-            hit = False
             for figure in self.items:
                 tested_figure = figure.boundingRect().getRect()
                 tested_figure_x = figure.pos().x()
@@ -339,14 +354,14 @@ class MainWindow(QtWidgets.QMainWindow):
                         if figure.checked is False:
                             figure.checked = True
                             self.marked_squares += 1
-                    hit = True
+                            figure.setVisible(False)
+                            self.update()
             if self.marked_squares == self.all_squares:
-                self.label.setText(TEXT.your_score + str((time.time() - self.start) / self.marked_squares) + " s")
+                self.label.setText(TEXT.your_score_3 + str(round((time.time() - self.start) / self.marked_squares, 3)) + " s")
                 self.start = time.time()
                 self.graphicsScene.clear()
                 self.createSquares()
         else:
-            hit = False
             for figure in self.items:
                 tested_figure = figure.boundingRect().getRect()
                 tested_figure_x = figure.pos().x()
@@ -359,12 +374,12 @@ class MainWindow(QtWidgets.QMainWindow):
                         if figure.checked is False:
                             figure.checked = True
                             self.marked_squares += 1
-                    hit = True
+                            figure.setVisible(False)
+                            self.update()
             if self.marked_squares == self.all_squares:
-                self.label.setText(TEXT.your_score + str((time.time() - self.start)/self.marked_squares) + " s")
+                self.label.setText(TEXT.your_score_3 + str(round((time.time() - self.start)/self.marked_squares, 3)) + " s")
                 self.continueButton.setVisible(True)
                 self.graphicsView.setVisible(False)
-
 
 
 if __name__ == '__main__':
