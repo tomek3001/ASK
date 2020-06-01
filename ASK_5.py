@@ -34,7 +34,7 @@ class TEXT(Structure):
     tab_1 = "Test"
     tab_2 = "Results"
 
-    first_task = "Press button as quiclky as possible"
+    first_task = "Press button as quiclky as possible."
     second_task = "Your next task is to capture the sound as fast as possible." \
                   "\nPress space when you hear gun shoot."
     third_task = "Your third task is to click all the squares."
@@ -43,13 +43,13 @@ class TEXT(Structure):
     your_score = "Your score in this test is: "
     your_score_3 = "Your score (time per square) in this test is: "
 
-    next = "Press to continue"
+    next = "Press to continue."
 
-    end = "Thank you for participation"
+    end = "Thank you for participation."
 
     file_name = resource_path('music\\smashing.wav')
 
-    exercise_tool = "\nPress C to go to next exercise"
+    exercise_tool = "\nPress C to finish this exercise."
 
     hexagon = ":/hexagon"
     circle = ":/circle"
@@ -142,6 +142,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.continueButton.clicked.connect(self.tasksCounter)
         self.testButton.clicked.connect(self.exercisesTool)
 
+
         #scores
         self.task_1_times = []
         self.task_2_time = 0
@@ -232,12 +233,16 @@ class MainWindow(QtWidgets.QMainWindow):
             self.continueButton.setVisible(True)
             self.label.setText(TEXT.second_task)
         if self.testNumber == 2:
+            if self.exercises:
+                self.label.setText(TEXT.second_task + TEXT.exercise_tool)
             self.thread = threading.Thread(target=self.makeSound)
             self.thread.start()
         if self.testNumber == 3:
             self.label.setText(TEXT.third_task)
             self.continueButton.setVisible(True)
         if self.testNumber == 4:
+            if self.exercises:
+                self.label.setText(TEXT.third_task + TEXT.exercise_tool)
             self.graphicsView.setVisible(True)
             self.start = time.time()
         if self.testNumber == 5:
@@ -269,6 +274,12 @@ class MainWindow(QtWidgets.QMainWindow):
         if key == 67 and self.exercises:
             self.continueButton.setVisible(True)
             self.graphicsView.setVisible(False)
+            if pygame.mixer.get_init() is not None:
+                pygame.mixer.stop()
+            if self.testNumber == 2:
+                self.label.setText(TEXT.second_task)
+            if self.testNumber == 4:
+                self.label.setText(TEXT.third_task)
 
     def endProgram(self):
         self.label.setText(TEXT.end)
@@ -306,10 +317,14 @@ class MainWindow(QtWidgets.QMainWindow):
             self.task_1_times.append(time.time())
 
     def newPosition(self):
+        if self.exercises:
+            forbidden_y_min = 5
+            forbidden_y_max = 116
+        else:
+            forbidden_y_min = 19
+            forbidden_y_max = 96
         forbidden_x_min = 83
         forbidden_x_max = 660
-        forbidden_y_min = 19
-        forbidden_y_max = 96
         forbidden = True
         while forbidden:
             new_x = rand(0, self.width() - 200)
@@ -322,28 +337,26 @@ class MainWindow(QtWidgets.QMainWindow):
     # Second test
     def makeSound(self):
         if self.exercises:
-            while not self.continueButton.isVisible():
+            while self.testNumber == 2:
                 time.sleep(rand(2, 6))
-                pygame.mixer.init(44100, -16, 1, 512)
-                pygame.mixer_music.load(TEXT.file_name)
-                if not self.continueButton.isVisible():
+                if self.testNumber == 2 and not self.continueButton.isVisible():
+                    pygame.mixer.init(44100, -16, 1, 512)
+                    pygame.mixer_music.load(TEXT.file_name)
                     pygame.mixer_music.play()
-                start = time.time()
-                while self.stop - start < 0:
-                    pass
-                self.reaction_time = time.time() - start
-                self.label.setText(TEXT.your_score + str(round(time.time() - start, 3)) + " s" + TEXT.exercise_tool)
+                    start = time.time()
+                    while self.stop - start < 0:
+                        pass
+                    self.label.setText(TEXT.your_score + str(round(self.stop - start, 3)) + " s" + TEXT.exercise_tool)
         else:
-            for i in range(1):
-                time.sleep(rand(2, 6))
-                pygame.mixer.init(44100, -16, 1, 512)
-                pygame.mixer_music.load(TEXT.file_name)
-                pygame.mixer_music.play()
-                start = time.time()
-                while self.stop - start < 0:
-                    pass
-                self.reaction_time = time.time() - start
-            self.label.setText(TEXT.your_score + str(round(self.reaction_time, 3)) + " s")
+            time.sleep(rand(2, 6))
+            pygame.mixer.init(44100, -16, 1, 512)
+            pygame.mixer_music.load(TEXT.file_name)
+            pygame.mixer_music.play()
+            start = time.time()
+            while self.stop - start < 0:
+                pass
+
+            self.label.setText(TEXT.your_score + str(round(self.stop - start, 3)) + " s")
             self.continueButton.setVisible(True)
 
     def mousePressEvent(self, event):
