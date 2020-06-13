@@ -19,6 +19,8 @@ class Texts(Structure):
     passwordLabel_text = "Hasło: "
     control_text = "OBECNY"
     temperature_text = "Temperatura urządzeń: "
+    speed_text = "Prędkość pracy: "
+    speedChange_text = "Zmiana prędkości taśmy."
 
     # Fonts
     login_font = QtGui.QFont()
@@ -37,7 +39,7 @@ class Texts(Structure):
 class Parameters(Structure):
     overheat_probability = 0.5
     block_probability = 0.5
-    control_time = 1
+    control_time = 20
     reaction_time = 5
 
 
@@ -76,10 +78,10 @@ class MainWindow(QtWidgets.QMainWindow):
         self.loginPasswordLabel.setGeometry(self.generate_rect(33, 44, 110, 50))
 
         # Program variables
-        # self.username = "admin"
-        # self.password = "admin"
-        self.username = ""
-        self.password = ""
+        self.username = "admin"
+        self.password = "admin"
+        # self.username = ""
+        # self.password = ""
         self.high_load = False
         self.time_since_control_popup = 0
         self.overheat_probability = Parameters.overheat_probability
@@ -87,9 +89,12 @@ class MainWindow(QtWidgets.QMainWindow):
         self.last_control_time = 0
         self.last_temperature_time = 0
         self.user_logged_in = False
-        self.production_speed = 1
+        self.production_speed = 2
         self.devices_temperature = 50
+        self.upper_temperature_rand = 4
+        self.lower_temperature_rand = 3
         self.proper_work = True
+        self.last_speed_change = -10
 
         # self.login_screen_visible(False)
 
@@ -107,6 +112,15 @@ class MainWindow(QtWidgets.QMainWindow):
         self.temperatureLabel.setText(Texts.temperature_text + str(self.devices_temperature))
 
         self.speedLabel = QtWidgets.QLabel(self)
+        self.speedLabel.setGeometry(self.generate_rect(30, 40, 400, 200))
+        self.speedLabel.setFont(Texts.type_font)
+        self.speedLabel.setText(Texts.speed_text + str(self.production_speed))
+
+        self.speedChangeLabel = QtWidgets.QLabel(self)
+        self.speedChangeLabel.setGeometry(self.generate_rect(50, 10, 500, 200))
+        self.speedChangeLabel.setFont(Texts.login_font)
+        self.speedChangeLabel.setText(Texts.speedChange_text)
+        self.speedChangeLabel.setVisible(False)
 
         self.accidentLabel = QtWidgets.QLabel(self)
 
@@ -121,10 +135,18 @@ class MainWindow(QtWidgets.QMainWindow):
                     self.time_since_control_popup = timeit.default_timer()
                 elif timeit.default_timer() - self.time_since_control_popup > Parameters.reaction_time:
                     self.logout()
-                self.controlButton.setText(Texts.control_text + f"\n{round(Parameters.reaction_time + self.time_since_control_popup - timeit.default_timer() )}")
+                self.controlButton.setText(Texts.control_text
+                                           + f"\n{round(Parameters.reaction_time + self.time_since_control_popup - timeit.default_timer() )}")
+
             if timeit.default_timer() - self.last_temperature_time > 1 and self.proper_work:
                 self.generate_new_temperature()
                 self.last_temperature_time = timeit.default_timer()
+
+            if (0 < (timeit.default_timer() - self.last_speed_change) < 5) \
+                    and round((timeit.default_timer() - self.last_speed_change))%2 == 0:
+                self.speedChangeLabel.setVisible(True)
+            elif self.speedChangeLabel.isVisible():
+                self.speedChangeLabel.setVisible(False)
         self.update()
 
     def login(self):
@@ -142,6 +164,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.main_screen_visible(False)
         self.controlButton.setVisible(False)
         self.user_logged_in = False
+        self.speedChangeLabel.setVisible(False)
 
     def control(self):
         self.last_control_time = timeit.default_timer()
@@ -156,6 +179,8 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def main_screen_visible(self, action):
         self.temperatureLabel.setVisible(action)
+        self.speedLabel.setVisible(action)
+        self.accidentLabel.setVisible(action)
 
     def check_user(self):
         if self.loginLoginText.toPlainText() == self.username \
@@ -165,8 +190,25 @@ class MainWindow(QtWidgets.QMainWindow):
             return False
 
     def generate_new_temperature(self):
-        self.devices_temperature += randint(-3, 4)
+        if self.devices_temperature < 50:
+            self.upper_temperature_rand = 4
+            self.lower_temperature_rand = 1
+        elif self.devices_temperature > 65:
+            self.upper_temperature_rand = 2
+            self.lower_temperature_rand = 3
+        self.devices_temperature += randint(-self.lower_temperature_rand, self.upper_temperature_rand)
         self.temperatureLabel.setText(Texts.temperature_text + str(self.devices_temperature))
+        self.generate_new_speed()
+
+    def generate_new_speed(self):
+        last_speed = self.production_speed
+        if self.devices_temperature <= 60:
+            self.production_speed = 2
+        else:
+            self.production_speed = 1
+        if last_speed - self.production_speed != 0:
+            self.last_speed_change = timeit.default_timer()
+        self.speedLabel.setText(Texts.speed_text + str(self.production_speed))
 
     def generate_rect(self, x, y, width, height):
         """Button generator
