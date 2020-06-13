@@ -4,11 +4,13 @@ import sys
 from ctypes import Structure
 import timeit
 from numpy.random import randint
+import pygame
 import numpy as np
 from random import random
 import threading
 import matplotlib.pyplot as plt
 import os
+import sounds
 
 
 class Texts(Structure):
@@ -39,8 +41,8 @@ class Texts(Structure):
 class Parameters(Structure):
     overheat_probability = 0.5
     block_probability = 0.5
-    control_time = 20
-    reaction_time = 5
+    control_time = 1
+    reaction_time = 1
 
 
 class MainWindow(QtWidgets.QMainWindow):
@@ -124,6 +126,9 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self.accidentLabel = QtWidgets.QLabel(self)
 
+        # Others
+        pygame.mixer.init(44100, -16, 1, 512)
+
         # Hide main program
         self.main_screen_visible(False)
 
@@ -165,6 +170,8 @@ class MainWindow(QtWidgets.QMainWindow):
         self.controlButton.setVisible(False)
         self.user_logged_in = False
         self.speedChangeLabel.setVisible(False)
+        pygame.mixer.music.load("sounds/horn.mp3")
+        pygame.mixer.music.play()
 
     def control(self):
         self.last_control_time = timeit.default_timer()
