@@ -1,44 +1,35 @@
-
+ï»¿
 # Dokumentacja projektu 5
 
 Wykonawcy:
 **Jakub Osielski 171973**
-**Tomasz Szymañski 160286**
+**Tomasz SzymaÅ„ski 160286**
 
 
 ## Polecenie
-Tematem zadania pi¹tego jest napisanie aplikacji uzale¿nionej od czasu. Jednym z zadañ aplikacji ma byæ mo¿liwie precyzyjny pomiar lub odmierzanie czasu. Wykorzystuj¹c dowolny jêzyk programowania dla omputerów w standardzie PC napisaæ aplikacjê spe³niaj¹c¹ funkcjê testera sprawnoœci psychomotorycznej np. kandydatów na kierowców. Na aplikacjê powinna siê sk³adaæ seria ró¿nych testów badaj¹cych prosty i ³o¿ony czas reakcji na bodŸce optyczne i akustyczne. Ka¿dy test w³aœciwy powinna poprzedzaæ informacja o przebiegu testu oraz faza szkoleniowa, w trakcie której osoba badana wykona te same czynnoœci co w trakcie testu, ale bez oceny. Po wykonaniu serii testów osoba poddana badaniom powinien zostaæ poinformowana o osi¹gniêtych wynikach w formie syntetycznej i analitycznej z wykorzystaniem wartoœci liczbowych i reprezentacji graficznej.
 
-Opracowanemu programowi powinna towarzyszyæ dokumentacja – sprawozdanie. Sprawozdanie powinno zawieraæ:
-- sformu³owanie zadania wraz z przyjêciem za³o¿eñ szczegó³owych np. sposobu pomiaru czasu i okreœlania interwa³ów czasowych;  
-- opis przyjêtych rozwi¹zañ programowych zilustrowanych ewentualnie fragmentami kodu (nie zamieszczaæ wydruków ca³ych programów!);
-- dyskusjê osi¹gniêtych wyników z wskazaniem wad i zalet napisanej aplikacji.
+Tematem zadania szÃ³stego jest napisanie aplikacji, bÄ™dÄ…cej symulatorem stanowiska dyspozytorskiego â€linii produkcyjnejâ€.Program ten ma zawieraÄ‡ elementy diagnostyki nadzorowanego â€procesu produkcjiâ€ jak i  autodiagnostyki operatora czuwajÄ…cegonad prawidÅ‚owym przebiegiem â€produkcjiâ€. WykorzystujÄ…c dostÄ™pne informacje na temat parametrÃ³w pracy komputera PC (np.temperatury rdzenia procesora, stopnia wykorzystania procesora, prÄ™dkoÅ›ci obrotowych wentylatorÃ³w itp.) oraz generatory liczblosowych i timery, zasymulowaÄ‡ parametry kontrolowanego â€procesu produkcyjnegoâ€. NaleÅ¼y przewidzieÄ‡ obsÅ‚ugÄ™ pojawiajÄ…cychsiÄ™ losowo awarii oraz przekroczeÅ„ granicznych  wartoÅ›ci wybranych parametrÃ³w procesu   - np. po przekroczeniu granicznejtemperatury obudowy silnika naleÅ¼y wÅ‚Ä…czyÄ‡ dodatkowy wentylator lub zwolniÄ‡ tempo pracy linii produkcyjnej itp. O wszystkichwyjÄ…tkowych zdarzeniach i wymaganych dziaÅ‚aniach, operator musi byÄ‡ informowany za poÅ›rednictwem odpowiedniego zestawukomunikatÃ³w. Program powinien zawieraÄ‡ okno logowania do aplikacji i na bieÅ¼Ä…co badaÄ‡ obecnoÅ›Ä‡ oraz â€przytomnoÅ›Ä‡â€ operatora.Element autodiagnostyczny powinien polegaÄ‡ na okresowym pojawianiu siÄ™ komunikatu informujÄ…cego o koniecznoÅ›ci potwierdzeniaobecnoÅ›ci przez wciÅ›niÄ™cie wybranego klawisza. W przypadku  braku potwierdzenia, np. przez co najmniej 30 sekund, powinnonastÄ™powaÄ‡ uruchomienie alarmu i wylogowanie operatora z systemu.
+## ZaÅ‚oÅ¼enia projektowe
 
-## Za³o¿enia projektowe
-
-Stworzenie prostej aplikacji testuj¹cej czas reakcji z dwoma trybami: treningowym i testowym.
-
+Program zostaÅ‚ wykonany przy wykorzystaniu jÄ™zyka programowania Python w wersji 3.7. SposÃ³b generowania temperatury jest losowy - jest to tylko symulacja. 
 ## Realizacja
 
-Do realizacji za³o¿onych celów wykorzystany zosta³ jêzyk Python wraz z dodatkowymi bibliotekami, a interfejs stworzyliœmy przy wykorzystaniu PySide2.
-Program posiada menu z opcjami testu i treningu. Po treningu ekran powraca do menu g³ównego. Po teœcie program ulega zamkniêciu.
 
-### Opcja treningu
-W opcji treningowej mo¿liwe jest æwiczenie ka¿dego zadania bez limitu czasowego. Przejœcie do kolejnego zadania odbywa siê poprzez wciœniêcie klawisza litery "c".
-### Opcja testu
-Wyniki testu wyœwietlane s¹ na bie¿¹co, a dodatkowo na sam koniec wyœwietlana jest graficzna interpretacja wyników pierwszego testu. Zadania prze³¹czane s¹ automatycznie.
-### Pomiar czasu
-Pomiar czasu odbywa siê poprzez pobranie aktualnej godziny wraz z rozpoczêciem jego zliczania i przypisanie jej do zmiennej start. Po zakoñczeniu mierzonego zadania wartoœæ zmiennej tej odejmowana jest od aktualnego czasu. Ró¿nica miêdzy tymi dwoma wartoœciami mówi nam o tym ile czasu up³ynê³o.
+### Temperatura
+
+Temperatura startowa to 50 stopni, a jej wartoÅ›Ä‡ zmienia siÄ™ w sposÃ³b losowy w zaleÅ¼noÅ›ci od stanu aktualnego. Fragment pÄ™tli dziaÅ‚ania programu przedstawiono na poniÅ¼szym zdjÄ™ciu.
+![2020-06-15_18-40-15](2020-06-15_18-40-15.png)
+### PrÄ™dkoÅ›Ä‡
+Podobnie jak w przypadku temperatury, zmiany prÄ™dkoÅ›ci pracy sÄ… generowane w sposÃ³b losowy - fragment kodu poniÅ¼ej.
+![2020-06-15_19-05-00](2020-06-15_19-05-00.png)
+
 
 ## Podsumowanie, uwagi
+Projekt chociaÅ¼ wydaje siÄ™ minimalistyczny to speÅ‚nia swoje zadanie i pozwala przeprowadziÄ‡ prostÄ… symulacjÄ™. 
 
-Program, mimo swojej prostoty, spe³nia za³o¿enia projektowe.
 
 ### Zalety
-- Testy oparte na czasie
-- Szybkoœæ dzia³ania
-- Opcja treningowa i testowa
+- Czytelny design
 
 ### Wady
-- Niezbyt rozbudowana analiza danych
-- Brak mo¿liwoœci porównania wyników z wynikami innych
+- Prostota
