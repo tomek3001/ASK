@@ -19,7 +19,7 @@ def resource_path(relative_path):
 
 class Texts(Structure):
     # Texts
-    windowTitle_text = "Nasza aplikacja"
+    windowTitle_text = "Zadanie 6"
     login_text = "Zaloguj"
     loginLabel_text = "Użytkownik: "
     passwordLabel_text = "Hasło: "
@@ -53,17 +53,12 @@ class Texts(Structure):
 class Parameters(Structure):
     overheat_probability = 0.5
     block_probability = 0.5
-<<<<<<< HEAD
     control_time = 20
     reaction_time = 5
 
     # Sounds
     accident_sound = resource_path('sounds\\siren.mp3')
     logout_sound = resource_path('sounds\\horn.mp3')
-=======
-    control_time = 5
-    reaction_time = 2
->>>>>>> f623875ce1c05809d8cc1c37e93ed8473fa8bd3e
 
 
 class MainWindow(QtWidgets.QMainWindow):
