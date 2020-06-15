@@ -5,12 +5,16 @@ from ctypes import Structure
 import timeit
 from numpy.random import randint
 import pygame
-import numpy as np
-from random import random
-import threading
-import matplotlib.pyplot as plt
 import os
-import sounds
+
+
+def resource_path(relative_path):
+    try:
+        # PyInstaller creates a temp folder and stores path in _MEIPASS
+        base_path = sys._MEIPASS
+    except Exception:
+        base_path = os.path.abspath(".")
+    return os.path.join(base_path, relative_path)
 
 
 class Texts(Structure):
@@ -23,6 +27,8 @@ class Texts(Structure):
     temperature_text = "Temperatura urządzeń: "
     speed_text = "Prędkość pracy: "
     speedChange_text = "Zmiana prędkości taśmy."
+    accident_text = "AWARIA TAŚMY!!!"
+    accidentButton_text = "Wezwij\ntechnika"
 
     # Fonts
     login_font = QtGui.QFont()
@@ -37,12 +43,22 @@ class Texts(Structure):
     type_font.setKerning(True)
     type_font.setStyleStrategy(QtGui.QFont.PreferDefault)
 
+    login_font = QtGui.QFont()
+    login_font.setPointSize(30)
+    login_font.setStrikeOut(False)
+    login_font.setKerning(True)
+    login_font.setStyleStrategy(QtGui.QFont.PreferDefault)
+
 
 class Parameters(Structure):
     overheat_probability = 0.5
     block_probability = 0.5
-    control_time = 1
-    reaction_time = 1
+    control_time = 20
+    reaction_time = 5
+
+    # Sounds
+    accident_sound = resource_path('sounds\\siren.mp3')
+    logout_sound = resource_path('sounds\\horn.mp3')
 
 
 class MainWindow(QtWidgets.QMainWindow):
@@ -63,6 +79,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.loginLoginText = QtWidgets.QTextEdit(self)
         self.loginLoginText.setGeometry(self.generate_rect(60, 30, 300, 50))
         self.loginLoginText.setFont(Texts.type_font)
+        self.loginLoginText.setTabChangesFocus(True)
 
         self.loginPasswordText = QtWidgets.QLineEdit(self)
         self.loginPasswordText.setGeometry(self.generate_rect(60, 45, 300, 50))
@@ -97,6 +114,8 @@ class MainWindow(QtWidgets.QMainWindow):
         self.lower_temperature_rand = 3
         self.proper_work = True
         self.last_speed_change = -10
+        self.is_accident = False
+        self.accident_chance = 1000
 
         # self.login_screen_visible(False)
 
@@ -107,6 +126,13 @@ class MainWindow(QtWidgets.QMainWindow):
         self.controlButton.setText(Texts.control_text)
         self.controlButton.pressed.connect(self.control)
         self.controlButton.setVisible(False)
+        
+        self.accidentButton = QtWidgets.QPushButton(self)
+        self.accidentButton.setGeometry(self.generate_rect(20, 80, 200, 200))
+        self.accidentButton.setFont(Texts.login_font)
+        self.accidentButton.setText(Texts.accidentButton_text)
+        self.accidentButton.pressed.connect(self.remove_accident)
+        self.accidentButton.setVisible(False)
 
         self.temperatureLabel = QtWidgets.QLabel(self)
         self.temperatureLabel.setGeometry(self.generate_rect(30, 30, 400, 200))
@@ -125,6 +151,11 @@ class MainWindow(QtWidgets.QMainWindow):
         self.speedChangeLabel.setVisible(False)
 
         self.accidentLabel = QtWidgets.QLabel(self)
+        self.accidentLabel.setGeometry(self.generate_rect(50, 10, 500, 200))
+        self.accidentLabel.setFont(Texts.login_font)
+        self.accidentLabel.setText(Texts.accident_text)
+        self.accidentLabel.setVisible(False)
+        self.accidentLabel.setStyleSheet('color: red')
 
         # Others
         pygame.mixer.init(44100, -16, 1, 512)
@@ -134,24 +165,36 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def paintEvent(self, event):
         if self.user_logged_in:
-            if timeit.default_timer() - self.last_control_time > Parameters.control_time:
-                if not self.controlButton.isVisible():
-                    self.controlButton.setVisible(True)
-                    self.time_since_control_popup = timeit.default_timer()
-                elif timeit.default_timer() - self.time_since_control_popup > Parameters.reaction_time:
-                    self.logout()
-                self.controlButton.setText(Texts.control_text
-                                           + f"\n{round(Parameters.reaction_time + self.time_since_control_popup - timeit.default_timer() )}")
 
-            if timeit.default_timer() - self.last_temperature_time > 1 and self.proper_work:
+            accident = self.proper_work
+
+            if timeit.default_timer() - self.last_temperature_time > 1:
                 self.generate_new_temperature()
                 self.last_temperature_time = timeit.default_timer()
 
-            if (0 < (timeit.default_timer() - self.last_speed_change) < 5) \
-                    and round((timeit.default_timer() - self.last_speed_change))%2 == 0:
-                self.speedChangeLabel.setVisible(True)
-            elif self.speedChangeLabel.isVisible():
-                self.speedChangeLabel.setVisible(False)
+            if self.proper_work:
+                if timeit.default_timer() - self.last_control_time > Parameters.control_time:
+                    if not self.controlButton.isVisible():
+                        self.controlButton.setVisible(True)
+                        self.time_since_control_popup = timeit.default_timer()
+                    elif timeit.default_timer() - self.time_since_control_popup > Parameters.reaction_time:
+                        self.logout()
+                    self.controlButton.setText(Texts.control_text
+                                               + f"\n{round(Parameters.reaction_time + self.time_since_control_popup - timeit.default_timer() )}")
+
+                if (0 < (timeit.default_timer() - self.last_speed_change) < 5) \
+                        and round((timeit.default_timer() - self.last_speed_change))%2 == 0:
+                    self.speedChangeLabel.setVisible(True)
+                elif self.speedChangeLabel.isVisible():
+                    self.speedChangeLabel.setVisible(False)
+
+                if randint(0, self.accident_chance) == 0:
+                    self.proper_work = False
+                    print("awaria")
+
+            if accident != self.proper_work and self.proper_work is False:
+                self.activate_accident()
+
         self.update()
 
     def login(self):
@@ -170,12 +213,31 @@ class MainWindow(QtWidgets.QMainWindow):
         self.controlButton.setVisible(False)
         self.user_logged_in = False
         self.speedChangeLabel.setVisible(False)
-        pygame.mixer.music.load("sounds/horn.mp3")
+        pygame.mixer.music.load(Parameters.logout_sound)
         pygame.mixer.music.play()
 
     def control(self):
         self.last_control_time = timeit.default_timer()
         self.controlButton.setVisible(False)
+
+    def remove_accident(self):
+        self.accidentLabel.setVisible(False)
+        self.accidentButton.setVisible(False)
+        self.production_speed = 1
+        self.proper_work = True
+        pygame.mixer.music.stop()
+        print("dzwiek stop")
+
+    def activate_accident(self):
+        self.accidentLabel.setVisible(True)
+        self.production_speed = 0
+        self.speedLabel.setText(Texts.speed_text + str(self.production_speed))
+        self.accidentButton.setVisible(True)
+        self.speedChangeLabel.setVisible(False)
+        pygame.mixer.music.load(Parameters.accident_sound)
+        pygame.mixer.music.play()
+        self.control()
+        self.accident_chance = self.accident_chance * 10
 
     def login_screen_visible(self, action):
         self.loginLoginLabel.setVisible(action)
@@ -187,7 +249,6 @@ class MainWindow(QtWidgets.QMainWindow):
     def main_screen_visible(self, action):
         self.temperatureLabel.setVisible(action)
         self.speedLabel.setVisible(action)
-        self.accidentLabel.setVisible(action)
 
     def check_user(self):
         if self.loginLoginText.toPlainText() == self.username \
@@ -197,15 +258,19 @@ class MainWindow(QtWidgets.QMainWindow):
             return False
 
     def generate_new_temperature(self):
-        if self.devices_temperature < 50:
-            self.upper_temperature_rand = 4
-            self.lower_temperature_rand = 1
-        elif self.devices_temperature > 65:
-            self.upper_temperature_rand = 2
-            self.lower_temperature_rand = 3
-        self.devices_temperature += randint(-self.lower_temperature_rand, self.upper_temperature_rand)
-        self.temperatureLabel.setText(Texts.temperature_text + str(self.devices_temperature))
-        self.generate_new_speed()
+        if self.proper_work:
+            if self.devices_temperature < 50:
+                self.upper_temperature_rand = 4
+                self.lower_temperature_rand = 1
+            elif self.devices_temperature > 65:
+                self.upper_temperature_rand = 2
+                self.lower_temperature_rand = 3
+            self.devices_temperature += randint(-self.lower_temperature_rand, self.upper_temperature_rand)
+            self.temperatureLabel.setText(Texts.temperature_text + str(self.devices_temperature))
+            self.generate_new_speed()
+        elif self.devices_temperature > 25:
+            self.devices_temperature -= 1
+            self.temperatureLabel.setText(Texts.temperature_text + str(self.devices_temperature))
 
     def generate_new_speed(self):
         last_speed = self.production_speed
