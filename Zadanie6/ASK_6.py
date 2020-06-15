@@ -41,8 +41,8 @@ class Texts(Structure):
 class Parameters(Structure):
     overheat_probability = 0.5
     block_probability = 0.5
-    control_time = 1
-    reaction_time = 1
+    control_time = 5
+    reaction_time = 2
 
 
 class MainWindow(QtWidgets.QMainWindow):
